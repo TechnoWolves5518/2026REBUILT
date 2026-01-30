@@ -47,10 +47,11 @@ public final class Constants
     public static final double LEFT_Y_DEADBAND = 0.1;
     public static final double RIGHT_X_DEADBAND = 0.1;
     public static final double TURN_CONSTANT    = 6;
+    public static final double LAUNCH_RATE = 1100;
   }
 
   public static final class LauncherConstants {
-        public static final int kMotorID = 5; // Set your actual CAN ID
+        public static final int kMotorID = 15; // Set your actual CAN ID
         public static final int kCurrentLimit = 40; // Amps
 
         // Feedforward Gains (Must be tuned for RPM units)
@@ -62,10 +63,10 @@ public final class Constants
         public static final double kA = 0.0005;
 
         // PID Gains
-        public static final double kP = 0.001; // Start very small
+        public static final double kP = 0.01; // Start very small
         public static final double kI = 0.0;
         public static final double kD = 0.0;
 
-        public static final double kTargetToleranceRPM = 50.0;
+        public static final double kTargetToleranceRPM = 10.0;
     }
 }
