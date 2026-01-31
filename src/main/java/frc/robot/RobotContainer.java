@@ -42,7 +42,8 @@ public class RobotContainer
   public final Field2d field = new Field2d();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  final         CommandXboxController driverXbox = new CommandXboxController(0);
+  final CommandXboxController driverXbox = new CommandXboxController(0);
+  final CommandXboxController schmoXbox = new CommandXboxController(1);
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                                 "swerve/neo"));
@@ -196,7 +197,7 @@ public class RobotContainer
     if (DriverStation.isTest())
     {
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity); // Overrides drive command above!
-
+      
       driverXbox.x().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.start().onTrue((Commands.runOnce(drivebase::zeroGyro)));
       driverXbox.back().whileTrue(drivebase.centerModulesCommand());
@@ -210,8 +211,8 @@ public class RobotContainer
       driverXbox.back().whileTrue(Commands.none());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.rightBumper().onTrue(Commands.none());
-      driverXbox.y().whileTrue(flywheel.runFlywheelCommand(Constants.OperatorConstants.LAUNCH_RATE));
-      driverXbox.b().whileTrue(flywheel.runFlywheelCommandSD());
+      schmoXbox.leftBumper().whileTrue(flywheel.runFlywheelCommand(Constants.OperatorConstants.FLYWHEEL_RATE));
+      schmoXbox.rightBumper().whileTrue(flywheel.runFlywheelCommandSD());
     }
 
   }

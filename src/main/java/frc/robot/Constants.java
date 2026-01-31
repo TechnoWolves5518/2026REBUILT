@@ -41,13 +41,16 @@ public final class Constants
 
   public static class OperatorConstants
   {
+    // Xbox Controllers
+    public static final int DRIVER_XBOX = 0;
+    public static final int SCHMO_XBOX = 1;
 
     // Joystick Deadband
     public static final double DEADBAND        = 0.1;
     public static final double LEFT_Y_DEADBAND = 0.1;
     public static final double RIGHT_X_DEADBAND = 0.1;
     public static final double TURN_CONSTANT    = 6;
-    public static final double LAUNCH_RATE = 2000;
+    public static final double FLYWHEEL_RATE = 2000;
   }
 
   public static final class LauncherConstants {
