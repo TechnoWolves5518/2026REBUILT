@@ -8,7 +8,7 @@ import java.io.File;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -41,6 +41,9 @@ public class RobotContainer
   // Define Field2d for SmartDashboard
   public final Field2d field = new Field2d();
 
+  // Define PDP
+  public final PowerDistribution pdp = new PowerDistribution(0, PowerDistribution.ModuleType.kCTRE);
+
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final CommandXboxController driverXbox = new CommandXboxController(0);
   final CommandXboxController schmoXbox = new CommandXboxController(1);
@@ -51,6 +54,7 @@ public class RobotContainer
   // Establish a Sendable Chooser that will be able to be sent to the SmartDashboard, allowing selection of desired auto
   private final SendableChooser<Command> autoChooser;
 
+  // Define flywheel system
   private final Flywheel flywheel = new Flywheel();
 
   /**
@@ -140,10 +144,15 @@ public class RobotContainer
    * controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight joysticks}.
    */
 
-  public void PublishFieldData() {
+  public void PublishSystemData() {
     // Add robot pose to Field2D and send data to DriverStation
     field.setRobotPose(drivebase.getPose());
     SmartDashboard.putData("Field", field);
+    // Add PDP current data for flywheel to DriverStation
+    SmartDashboard.putNumber("Flywheel/Current", pdp.getCurrent(1));
+    // Add system voltage and current to DriverStation
+    SmartDashboard.putNumber("System/Voltage", pdp.getVoltage());
+    SmartDashboard.putNumber("System/Current", pdp.getTotalCurrent());
   }
 
 
@@ -213,6 +222,7 @@ public class RobotContainer
       driverXbox.rightBumper().onTrue(Commands.none());
       schmoXbox.leftBumper().whileTrue(flywheel.runFlywheelCommand(Constants.OperatorConstants.FLYWHEEL_RATE));
       schmoXbox.rightBumper().whileTrue(flywheel.runFlywheelCommandSD());
+      schmoXbox.a().whileTrue(flywheel.runFlywheelVoltage());
     }
 
   }
