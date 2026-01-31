@@ -28,7 +28,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import swervelib.SwerveInputStream;
-import frc.robot.subsystems.Launcher;
+import frc.robot.subsystems.Flywheel;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -50,7 +50,7 @@ public class RobotContainer
   // Establish a Sendable Chooser that will be able to be sent to the SmartDashboard, allowing selection of desired auto
   private final SendableChooser<Command> autoChooser;
 
-  private final Launcher launcher = new Launcher();
+  private final Flywheel flywheel = new Flywheel();
 
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
@@ -210,7 +210,8 @@ public class RobotContainer
       driverXbox.back().whileTrue(Commands.none());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.rightBumper().onTrue(Commands.none());
-      driverXbox.y().onTrue(launcher.runFlywheelCommand(Constants.OperatorConstants.LAUNCH_RATE));
+      driverXbox.y().whileTrue(flywheel.runFlywheelCommand(Constants.OperatorConstants.LAUNCH_RATE));
+      driverXbox.b().whileTrue(flywheel.runFlywheelCommandSD());
     }
 
   }

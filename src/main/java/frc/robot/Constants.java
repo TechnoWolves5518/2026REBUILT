@@ -47,26 +47,29 @@ public final class Constants
     public static final double LEFT_Y_DEADBAND = 0.1;
     public static final double RIGHT_X_DEADBAND = 0.1;
     public static final double TURN_CONSTANT    = 6;
-    public static final double LAUNCH_RATE = 1100;
+    public static final double LAUNCH_RATE = 2000;
   }
 
   public static final class LauncherConstants {
-        public static final int kMotorID = 15; // Set your actual CAN ID
-        public static final int kCurrentLimit = 40; // Amps
+    public static final class FlywheelConstants {
+      public static final int kMotorID = 15; // Set your actual CAN ID
+      public static final int kCurrentLimit = 40; // Amps
 
-        // Feedforward Gains (Must be tuned for RPM units)
-        // kS: Volts to overcome static friction
-        // kV: Volts per RPM (e.g., 12V / 5676 RPM ≈ 0.0021)
-        // kA: Volts per (RPM/s) acceleration
-        public static final double kS = 0.1; 
-        public static final double kV = 0.0021; 
-        public static final double kA = 0.0005;
+      // Feedforward Gains (Must be tuned for RPM units)
+      // kS: Volts to overcome static friction
+      // kV: Volts per RPM (e.g., 12V / 5676 RPM ≈ 0.0021)
+      // kA: Volts per (RPM/s) acceleration
+      public static final double kS = 0.1; 
+      public static final double kV = 4.3/2000; 
+      public static final double kA = 0.0005;
 
-        // PID Gains
-        public static final double kP = 0.01; // Start very small
-        public static final double kI = 0.0;
-        public static final double kD = 0.0;
+      // PID Gains
+      public static final double kP = 0.005; // Start very small
+      public static final double kI = 0.0;
+      public static final double kD = 0.0;
 
-        public static final double kTargetToleranceRPM = 10.0;
+      public static final double kTargetToleranceRPM = 10.0;
+    }
+        
     }
 }
