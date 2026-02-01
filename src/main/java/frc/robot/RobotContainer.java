@@ -55,7 +55,8 @@ public class RobotContainer
   private final SendableChooser<Command> autoChooser;
 
   // Define flywheel system
-  private final Flywheel flywheel = new Flywheel();
+  //TODO readd the launcher when it's installed
+  private final Flywheel flywheel;
 
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
@@ -115,6 +116,10 @@ public class RobotContainer
    */
   public RobotContainer()
   {
+    // Initialize photon vision class in swerve subsystem
+    drivebase.setupPhotonVision();
+    // Initialize path planner class in swerve subsystem
+    drivebase.setupPathPlanner();
     // Configure the trigger bindings
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
@@ -134,6 +139,11 @@ public class RobotContainer
     //Put the autoChooser on the SmartDashboard
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
+    if (Constants.hasFlywheel) {
+      flywheel = new Flywheel();
+    } else {
+      flywheel = null;
+    }
   }
 
   /**
@@ -220,9 +230,13 @@ public class RobotContainer
       driverXbox.back().whileTrue(Commands.none());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.rightBumper().onTrue(Commands.none());
-      schmoXbox.leftBumper().whileTrue(flywheel.runFlywheelCommand(Constants.OperatorConstants.FLYWHEEL_RATE));
-      schmoXbox.rightBumper().whileTrue(flywheel.runFlywheelCommandSD());
-      schmoXbox.a().whileTrue(flywheel.runFlywheelVoltage());
+      if (Constants.hasFlywheel) {
+        schmoXbox.leftBumper().whileTrue(flywheel.runFlywheelCommand(Constants.OperatorConstants.FLYWHEEL_RATE));
+        schmoXbox.rightBumper().whileTrue(flywheel.runFlywheelCommandSD());
+        schmoXbox.a().whileTrue(flywheel.runFlywheelVoltage());
+      } else {
+        DriverStation.reportError("[TW_CODEBASE] Critical launcher component not installed (source: flywheel)", true);
+      }
     }
 
   }

@@ -39,6 +39,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import swervelib.SwerveDrive;
 import swervelib.telemetry.SwerveDriveTelemetry;
+import frc.robot.Constants;
 
 
 /**
@@ -52,7 +53,7 @@ public class Vision
    * April Tag Field Layout of the year.
    */
   public static final AprilTagFieldLayout fieldLayout                     = AprilTagFieldLayout.loadField(
-      AprilTagFields.k2025ReefscapeAndyMark);
+      AprilTagFields.k2026RebuiltAndymark);
   /**
    * Ambiguity defined as a value between (0,1). Used in {@link Vision#filterPose}.
    */
@@ -337,30 +338,21 @@ public class Vision
     /**
      * Left Camera
      */
-    LEFT_CAM("left",
-             new Rotation3d(0, Math.toRadians(-24.094), Math.toRadians(30)),
-             new Translation3d(Units.inchesToMeters(12.056),
-                               Units.inchesToMeters(10.981),
-                               Units.inchesToMeters(8.44)),
-             VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
+    LEFT_CAM("AprilCamFL",
+             new Rotation3d(0, Units.degreesToRadians(10), Units.degreesToRadians(160)),
+             new Translation3d(Units.inchesToMeters((-13.75)+(4.61)),
+                               Units.inchesToMeters((13.75)-(2.185)),
+                               Units.inchesToMeters(10)),
+             VecBuilder.fill(4 * Constants.VisionSystem.cameraSTDmultiplier, 4 * Constants.VisionSystem.cameraSTDmultiplier, 8 * Constants.VisionSystem.cameraSTDmultiplier), VecBuilder.fill(0.5 * Constants.VisionSystem.cameraSTDmultiplier, 0.5 * Constants.VisionSystem.cameraSTDmultiplier, 1 * Constants.VisionSystem.cameraSTDmultiplier)),
     /**
      * Right Camera
      */
-    RIGHT_CAM("right",
-              new Rotation3d(0, Math.toRadians(-24.094), Math.toRadians(-30)),
-              new Translation3d(Units.inchesToMeters(12.056),
-                                Units.inchesToMeters(-10.981),
-                                Units.inchesToMeters(8.44)),
-              VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1)),
-    /**
-     * Center Camera
-     */
-    CENTER_CAM("center",
-               new Rotation3d(0, Units.degreesToRadians(18), 0),
-               new Translation3d(Units.inchesToMeters(-4.628),
-                                 Units.inchesToMeters(-10.687),
-                                 Units.inchesToMeters(16.129)),
-               VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
+    RIGHT_CAM("AprilCamFR",
+              new Rotation3d(0, Units.degreesToRadians(10), Units.degreesToRadians(200)),
+              new Translation3d(Units.inchesToMeters((-13.75)+(4.61)),
+                                Units.inchesToMeters((-13.75)+(2.185)),
+                                Units.inchesToMeters(10)),
+              VecBuilder.fill(4 * Constants.VisionSystem.cameraSTDmultiplier, 4 * Constants.VisionSystem.cameraSTDmultiplier, 8 * Constants.VisionSystem.cameraSTDmultiplier), VecBuilder.fill(0.5 * Constants.VisionSystem.cameraSTDmultiplier, 0.5 * Constants.VisionSystem.cameraSTDmultiplier, 1 * Constants.VisionSystem.cameraSTDmultiplier));
 
     /**
      * Latency alert to use when high latency is detected.
