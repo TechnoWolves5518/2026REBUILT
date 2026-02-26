@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel;
@@ -51,7 +52,23 @@ public class Arm extends SubsystemBase {
     motor.setVoltage(pid + ff);
   }
 
+  public void setVoltage(double targetVoltage) {
+    motor.setVoltage(targetVoltage);
+  }
+
   public void stop() {
     motor.stopMotor();
+  }
+  
+  public Command runAngle(double Angle) {
+    return this.run(() -> setAngle(Angle));
+  }
+
+  public Command runVoltage(double Voltage) {
+    return this.run(() -> setVoltage(Voltage));
+  }
+
+  public Command stopCommand() {
+    return this.run(this::stop);
   }
 }
