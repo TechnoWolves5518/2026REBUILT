@@ -71,6 +71,19 @@ public final class Constants
   }
 
   public static final class LauncherConstants {
+    public static final class RotatorConstants {
+      public static final int CAN = 0;
+
+      public static final double kP = 0;
+      public static final double kI = 0;
+      public static final double kD = 0;
+      
+      public static final double kS = 0;
+      public static final double kG = 0;
+      public static final double kV = 0;
+      public static final double kA = 0;
+      public static final double gearRatio = 0;
+    }
     public static final class FlywheelConstants {
       public static final int kMotorID = 15; // Set your actual CAN ID
       public static final int kCurrentLimit = 80; // Amps
@@ -94,6 +107,8 @@ public final class Constants
 
       public static final double kMaxVelocityRPM = 5000.0;
       public static final double kMaxAccelerationRPMps = 5000.0;
+      
+      public static final double kGearRatio = 0;
     }
         
   }
@@ -135,6 +150,7 @@ public final class Constants
 
       public static final double kMaxVelocityRPM = 5000.0;
       public static final double kMaxAccelerationRPMps = 5000.0;
+      public static final double kGearRatio = 0;
     }
   }
 }

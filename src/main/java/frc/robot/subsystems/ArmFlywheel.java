@@ -32,6 +32,7 @@ public class ArmFlywheel extends SubsystemBase {
         SparkMaxConfig config = new SparkMaxConfig();
         config.smartCurrentLimit(IntakeConstants.FlywheelConstants.kCurrentLimit);
         config.idleMode(IdleMode.kCoast);
+        
         m_motor.configure(config, SparkMax.ResetMode.kResetSafeParameters, SparkMax.PersistMode.kPersistParameters);
 
         m_encoder = m_motor.getEncoder();
@@ -124,7 +125,7 @@ public class ArmFlywheel extends SubsystemBase {
 
         m_targetRPM = targetRPM; // Save for logging
         
-        double pidOutput = m_pidController.calculate(m_encoder.getVelocity(), targetRPM);
+        double pidOutput = m_pidController.calculate((m_encoder.getVelocity() * IntakeConstants.FlywheelConstants.kGearRatio), targetRPM);
 
         // Use the setpoint from the profile (position is RPM, velocity is RPM/s acceleration)
         TrapezoidProfile.State setpoint = m_pidController.getSetpoint();
