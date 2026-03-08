@@ -73,7 +73,7 @@ public final class Constants
 
   public static final class LauncherConstants {
     public static final class RotatorConstants {
-      public static final int CAN = 0;
+      public static final int CAN = 20;
 
       public static final double kP = 0;
       public static final double kI = 0;
@@ -86,7 +86,7 @@ public final class Constants
       public static final double gearRatio = 1;
     }
     public static final class FlywheelConstants {
-      public static final int kMotorID = 15; // Set your actual CAN ID
+      public static final int kMotorID = 23; // Set your actual CAN ID
       public static final int kCurrentLimit = 80; // Amps
 
       // Feedforward Gains (Must be tuned for RPM units)
@@ -114,7 +114,7 @@ public final class Constants
 
     public static final class FeederConstants {
       public static final class Upper {
-        public static final int kMotorID = 15; // Set your actual CAN ID
+        public static final int kMotorID = 22; // Set your actual CAN ID
         public static final int kCurrentLimit = 80; // Amps
 
         // Feedforward Gains (Must be tuned for RPM units)
@@ -140,7 +140,7 @@ public final class Constants
         public static final double kGearRatio = 1;
       }
       public static final class Lower {
-        public static final int kMotorID = 15; // Set your actual CAN ID
+        public static final int kMotorID = 21; // Set your actual CAN ID
         public static final int kCurrentLimit = 80; // Amps
 
         // Feedforward Gains (Must be tuned for RPM units)
@@ -179,11 +179,11 @@ public final class Constants
       public static final double kV = 0;
       public static final double kA = 0;
 
-      public static final int CAN = 0;
+      public static final int CAN = 17;
 
     }
     public static final class FlywheelConstants {
-      public static final int kMotorID = 16
+      public static final int kMotorID = 19
       ; // Set your actual CAN ID
       public static final int kCurrentLimit = 80; // Amps
 

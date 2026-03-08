@@ -11,17 +11,30 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.LauncherConstants;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel;
-import com.revrobotics.spark.SparkAbsoluteEncoder;
+import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.units.Units;
 
 public class LauncherRotate extends SubsystemBase {
   private double angle; // Current height of the arm in meters
   private PIDController pidController; // PID controller for arm height control
   private ArmFeedforward feedforward; // Feedforward for arm control
   private SparkMax motor;
-  private SparkAbsoluteEncoder encoder;
+  private RelativeEncoder encoder;
   /** Creates a new LauncherRotate. */
+
   public LauncherRotate() {
+    SmartDashboard.putNumber("Launcher/Arm/kP", LauncherConstants.RotatorConstants.kP);
+    SmartDashboard.putNumber("Launcher/Arm/kI", LauncherConstants.RotatorConstants.kI);
+    SmartDashboard.putNumber("Launcher/Arm/kD", LauncherConstants.RotatorConstants.kD);
+    SmartDashboard.putNumber("Launcher/Arm/kS", LauncherConstants.RotatorConstants.kS);
+    SmartDashboard.putNumber("Launcher/Arm/kG", LauncherConstants.RotatorConstants.kG);
+    SmartDashboard.putNumber("Launcher/Arm/kV", LauncherConstants.RotatorConstants.kV);
+    SmartDashboard.putNumber("Launcher/Arm/kA", LauncherConstants.RotatorConstants.kA);
+    SmartDashboard.putNumber("Launcher/Arm/Voltage", 0);
+    SmartDashboard.putNumber("Launcher/Arm/Current", 0);
+    SmartDashboard.putNumber("Launcher/Arm/Angle", 0);
+
     this.feedforward = new ArmFeedforward(
       LauncherConstants.RotatorConstants.kS,
       LauncherConstants.RotatorConstants.kG,
@@ -35,15 +48,35 @@ public class LauncherRotate extends SubsystemBase {
       LauncherConstants.RotatorConstants.kD
     );
     this.motor = new SparkMax(LauncherConstants.RotatorConstants.CAN, SparkLowLevel.MotorType.kBrushless);
-    this.encoder = motor.getAbsoluteEncoder();
+    this.encoder = motor.getEncoder();
+    encoder.setPosition(Units.Radians.convertFrom(-20, Units.Degrees));
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    angle = encoder.getPosition() * LauncherConstants.RotatorConstants.gearRatio;
-    SmartDashboard.putNumber("Launcher/ArmEncoderPosition", angle);
-    SmartDashboard.putNumber("Launcher/ArmEncoderVelocity", encoder.getVelocity());
+    angle = Units.Degrees.convertFrom(encoder.getPosition(), Units.Radians);
+    SmartDashboard.putNumber("Launcher/Arm/EncoderPosition", angle);
+    SmartDashboard.putNumber("Launcher/Arm/EncoderVelocity", encoder.getVelocity());
+    SmartDashboard.putNumber("Launcher/Arm/AppliedVoltage", motor.getAppliedOutput() * motor.getBusVoltage());
+    SmartDashboard.putNumber("Launcher/Arm/AppliedCurrent", motor.getOutputCurrent());
+    
+    double kP = SmartDashboard.getNumber("Launcher/Arm/kP", LauncherConstants.RotatorConstants.kP);
+    double kI = SmartDashboard.getNumber("Launcher/Arm/kI", LauncherConstants.RotatorConstants.kI);
+    double kD = SmartDashboard.getNumber("Launcher/Arm/kD", LauncherConstants.RotatorConstants.kD);
+    double kS = SmartDashboard.getNumber("Launcher/Arm/kS", LauncherConstants.RotatorConstants.kS);
+    double kG = SmartDashboard.getNumber("Launcher/Arm/kG", LauncherConstants.RotatorConstants.kG);
+    double kV = SmartDashboard.getNumber("Launcher/Arm/kV", LauncherConstants.RotatorConstants.kV);
+    double kA = SmartDashboard.getNumber("Launcher/Arm/kA", LauncherConstants.RotatorConstants.kA);
+
+    if (kP != pidController.getP()) pidController.setP(kP);
+    if (kI != pidController.getI()) pidController.setI(kI);
+    if (kD != pidController.getD()) pidController.setD(kD);
+
+    if (kS != feedforward.getKs()) feedforward.setKs(kS);
+    if (kG != feedforward.getKg()) feedforward.setKg(kG);
+    if (kV != feedforward.getKv()) feedforward.setKv(kV);
+    if (kA != feedforward.getKa()) feedforward.setKa(kA);
   }
 
   public void setAngle(double targetAngle) {

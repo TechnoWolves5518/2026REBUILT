@@ -30,6 +30,7 @@ import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import swervelib.SwerveInputStream;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.LauncherRotate;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -39,6 +40,7 @@ import frc.robot.subsystems.Feeder;
 public class RobotContainer
 {
 
+  private final LauncherRotate launcherRotate = new LauncherRotate();
   // Define Field2d for SmartDashboard
   public final Field2d field = new Field2d();
 
@@ -243,6 +245,9 @@ public class RobotContainer
       schmoXbox.leftTrigger().whileTrue(feeder.runFeeder(Constants.OperatorConstants.FEEDER_RATE));
       schmoXbox.rightTrigger().whileTrue(feeder.runFeederSD());
       schmoXbox.y().whileTrue(feeder.runFeederVoltage());
+      schmoXbox.pov(270).whileTrue(launcherRotate.runAngle(SmartDashboard.getNumber("Launcher/Arm/Angle", 0)));
+      schmoXbox.pov(90).whileTrue(launcherRotate.runVoltage(SmartDashboard.getNumber("Launcher/Arm/Voltage", 0)));
+      schmoXbox.pov(0).whileTrue(launcherRotate.stopCommand());
     }
 
   }
