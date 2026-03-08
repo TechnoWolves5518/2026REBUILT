@@ -126,6 +126,11 @@ public class RobotContainer
     // Initialize path planner class in swerve subsystem
     drivebase.setupPathPlanner();
     // Configure the trigger bindings
+    if (Constants.hasFlywheel) {
+      flywheel = new Flywheel();
+    } else {
+      flywheel = null;
+    }
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     
@@ -143,12 +148,6 @@ public class RobotContainer
     
     //Put the autoChooser on the SmartDashboard
     SmartDashboard.putData("Auto Chooser", autoChooser);
-
-    if (Constants.hasFlywheel) {
-      flywheel = new Flywheel();
-    } else {
-      flywheel = null;
-    }
   }
 
   /**
