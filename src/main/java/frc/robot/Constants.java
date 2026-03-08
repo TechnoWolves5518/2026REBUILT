@@ -82,7 +82,7 @@ public final class Constants
       public static final double kG = 0;
       public static final double kV = 0;
       public static final double kA = 0;
-      public static final double gearRatio = 0;
+      public static final double gearRatio = 1;
     }
     public static final class FlywheelConstants {
       public static final int kMotorID = 15; // Set your actual CAN ID
