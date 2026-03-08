@@ -29,6 +29,7 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import swervelib.SwerveInputStream;
 import frc.robot.subsystems.Flywheel;
+import frc.robot.subsystems.Feeder;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -57,6 +58,8 @@ public class RobotContainer
   // Define flywheel system
   //TODO readd the launcher when it's installed
   private final Flywheel flywheel;
+
+  private final Feeder feeder = new Feeder();
 
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
@@ -237,6 +240,9 @@ public class RobotContainer
       } else {
         DriverStation.reportError("[TW_CODEBASE] Critical launcher component not installed (source: flywheel)", true);
       }
+      schmoXbox.leftTrigger().whileTrue(feeder.runFeeder(Constants.OperatorConstants.FEEDER_RATE));
+      schmoXbox.rightTrigger().whileTrue(feeder.runFeederSD());
+      schmoXbox.y().whileTrue(feeder.runFeederVoltage());
     }
 
   }

@@ -41,7 +41,7 @@ public final class Constants
 //    public static final PIDConstants ANGLE_PID       = new PIDConstants(0.4, 0, 0.01);
 //  }
 
-  public static final boolean hasFlywheel = false;
+  public static final boolean hasFlywheel = true;
 
   
 
@@ -68,6 +68,7 @@ public final class Constants
     public static final double RIGHT_X_DEADBAND = 0.1;
     public static final double TURN_CONSTANT    = 6;
     public static final double FLYWHEEL_RATE = 2000;
+    public static final double FEEDER_RATE = 500;
   }
 
   public static final class LauncherConstants {
@@ -136,7 +137,7 @@ public final class Constants
         public static final double kMaxVelocityRPM = 5000.0;
         public static final double kMaxAccelerationRPMps = 5000.0;
         
-        public static final double kGearRatio = 0;
+        public static final double kGearRatio = 1;
       }
       public static final class Lower {
         public static final int kMotorID = 15; // Set your actual CAN ID
@@ -162,7 +163,7 @@ public final class Constants
         public static final double kMaxVelocityRPM = 5000.0;
         public static final double kMaxAccelerationRPMps = 5000.0;
         
-        public static final double kGearRatio = 0;
+        public static final double kGearRatio = 1;
       }
     }
         
@@ -205,7 +206,7 @@ public final class Constants
 
       public static final double kMaxVelocityRPM = 5000.0;
       public static final double kMaxAccelerationRPMps = 5000.0;
-      public static final double kGearRatio = 0;
+      public static final double kGearRatio = 1;
     }
   }
 }

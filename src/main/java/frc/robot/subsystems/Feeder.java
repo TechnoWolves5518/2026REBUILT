@@ -85,7 +85,6 @@ public class Feeder extends SubsystemBase {
         SmartDashboard.putNumber("Feeder/Upper/kS", FeederConstants.Upper.kS);
         SmartDashboard.putNumber("Feeder/Upper/kV", FeederConstants.Upper.kV);
         SmartDashboard.putNumber("Feeder/Upper/kA", FeederConstants.Upper.kA);
-        SmartDashboard.putNumber("Feeder/Upper/Target", 0);
         SmartDashboard.putNumber("Feeder/Upper/Voltage", 0);
         SmartDashboard.putNumber("Feeder/Lower/kP", FeederConstants.Lower.kP);
         SmartDashboard.putNumber("Feeder/Lower/kI", FeederConstants.Lower.kI);
@@ -93,8 +92,8 @@ public class Feeder extends SubsystemBase {
         SmartDashboard.putNumber("Feeder/Lower/kS", FeederConstants.Lower.kS);
         SmartDashboard.putNumber("Feeder/Lower/kV", FeederConstants.Lower.kV);
         SmartDashboard.putNumber("Feeder/Lower/kA", FeederConstants.Lower.kA);
-        SmartDashboard.putNumber("Feeder/Lower/Target", 0);
         SmartDashboard.putNumber("Feeder/Lower/Voltage", 0);
+        SmartDashboard.putNumber("Feeder/Main/Target", 0);
     }
 
     double getVelocityGeared() {
@@ -214,8 +213,8 @@ public class Feeder extends SubsystemBase {
     }
 
     public void setTargetVoltage() {
-        m_motor.setVoltage(SmartDashboard.getNumber("Flywheel/Voltage", 0));
-        m_motor2.setVoltage(SmartDashboard.getNumber("Flywheel/Voltage", 0));
+        m_motor.setVoltage(SmartDashboard.getNumber("Feeder/Upper/Voltage", 0));
+        m_motor2.setVoltage(SmartDashboard.getNumber("Feeder/Lower/Voltage", 0));
     }
 
 
@@ -228,21 +227,21 @@ public class Feeder extends SubsystemBase {
         m_targetRPM = 0.0;
     }
 
-    public Command runFlywheelCommand(double targetRPM) {
+    public Command runFeeder(double targetRPM) {
         return this.runEnd(
             () -> setTargetVelocity(targetRPM),
             this::stop
         );
     }
 
-    public Command runFlywheelCommandSD() {
+    public Command runFeederSD() {
             return this.runEnd(
                 () -> setTargetVelocity(SmartDashboard.getNumber("Flywheel/Target", 0)),
                 this::stop
             );
         }
 
-    public Command runFlywheelVoltage() {
+    public Command runFeederVoltage() {
         return this.runEnd(this::setTargetVoltage, this::stop);
     }
 }
