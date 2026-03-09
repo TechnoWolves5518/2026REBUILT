@@ -181,6 +181,7 @@ public class RobotContainer
     Command driveFieldOrientedAnglularVelocityKeyboard = drivebase.driveFieldOriented(driveAngularVelocityKeyboard);
     Command driveSetpointGenKeyboard = drivebase.driveWithSetpointGeneratorFieldRelative(
         driveDirectAngleKeyboard);
+    launcherRotate.setDefaultCommand(launcherRotate.autoCommand());
 
     if (RobotBase.isSimulation())
     {
@@ -243,12 +244,9 @@ public class RobotContainer
       }
       schmoXbox.leftTrigger().whileTrue(feeder.runFeeder(Constants.OperatorConstants.FEEDER_RATE));
       schmoXbox.rightTrigger().whileTrue(feeder.runFeederSD());
-      schmoXbox.y().whileTrue(feeder.runFeederVoltage());
-      schmoXbox.pov(270).whileTrue(launcherRotate.runAngle(SmartDashboard.getNumber("Launcher/Arm/Angle", 0)));
-      schmoXbox.pov(90).whileTrue(launcherRotate.runVoltage(SmartDashboard.getNumber("Launcher/Arm/Voltage", 0)));
-      schmoXbox.pov(0).whileTrue(launcherRotate.stopCommand());
+      schmoXbox.x().whileTrue(feeder.runFeederVoltage());
+      schmoXbox.y().whileTrue(launcherRotate.runVoltage(SmartDashboard.getNumber("Launcher/Arm/Voltage", 0)));
     }
-
   }
 
   /**

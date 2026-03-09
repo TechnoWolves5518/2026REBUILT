@@ -5,7 +5,9 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ArmFeedforward;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.LauncherConstants;
@@ -17,8 +19,8 @@ import edu.wpi.first.units.Units;
 
 public class LauncherRotate extends SubsystemBase {
   private double angle; // Current height of the arm in meters
-  private PIDController pidController; // PID controller for arm height control
-  private ArmFeedforward feedforward; // Feedforward for arm control
+  private ProfiledPIDController pidController; // PID controller for arm height control
+  private SimpleMotorFeedforward feedforward; // Feedforward for arm control
   private SparkMax motor;
   private RelativeEncoder encoder;
   /** Creates a new LauncherRotate. */
@@ -28,44 +30,47 @@ public class LauncherRotate extends SubsystemBase {
     SmartDashboard.putNumber("Launcher/Arm/kI", LauncherConstants.RotatorConstants.kI);
     SmartDashboard.putNumber("Launcher/Arm/kD", LauncherConstants.RotatorConstants.kD);
     SmartDashboard.putNumber("Launcher/Arm/kS", LauncherConstants.RotatorConstants.kS);
-    SmartDashboard.putNumber("Launcher/Arm/kG", LauncherConstants.RotatorConstants.kG);
     SmartDashboard.putNumber("Launcher/Arm/kV", LauncherConstants.RotatorConstants.kV);
     SmartDashboard.putNumber("Launcher/Arm/kA", LauncherConstants.RotatorConstants.kA);
     SmartDashboard.putNumber("Launcher/Arm/Voltage", 0);
     SmartDashboard.putNumber("Launcher/Arm/Current", 0);
     SmartDashboard.putNumber("Launcher/Arm/Angle", 0);
+    SmartDashboard.putBoolean("Launcher/Arm/systemRun", false);
+    SmartDashboard.putBoolean("Launcher/Arm/systemStop", false);
 
-    this.feedforward = new ArmFeedforward(
+    this.feedforward = new SimpleMotorFeedforward(
       LauncherConstants.RotatorConstants.kS,
-      LauncherConstants.RotatorConstants.kG,
       LauncherConstants.RotatorConstants.kV,
       LauncherConstants.RotatorConstants.kA
     );
     angle = 0.0; // Initialize the arm angle to 0 degrees
-    this.pidController = new PIDController(
+    this.pidController = new ProfiledPIDController(
       LauncherConstants.RotatorConstants.kP,
       LauncherConstants.RotatorConstants.kI,
-      LauncherConstants.RotatorConstants.kD
+      LauncherConstants.RotatorConstants.kD,
+      new TrapezoidProfile.Constraints(
+        LauncherConstants.RotatorConstants.maxVelocity,
+        LauncherConstants.RotatorConstants.maxAcceleration
+      )
     );
     this.motor = new SparkMax(LauncherConstants.RotatorConstants.CAN, SparkLowLevel.MotorType.kBrushless);
     this.encoder = motor.getEncoder();
-    encoder.setPosition(Units.Radians.convertFrom(-20, Units.Degrees));
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    angle = Units.Degrees.convertFrom(encoder.getPosition(), Units.Radians);
+    angle = encoder.getPosition() * 360;
     SmartDashboard.putNumber("Launcher/Arm/EncoderPosition", angle);
     SmartDashboard.putNumber("Launcher/Arm/EncoderVelocity", encoder.getVelocity());
     SmartDashboard.putNumber("Launcher/Arm/AppliedVoltage", motor.getAppliedOutput() * motor.getBusVoltage());
     SmartDashboard.putNumber("Launcher/Arm/AppliedCurrent", motor.getOutputCurrent());
+
     
     double kP = SmartDashboard.getNumber("Launcher/Arm/kP", LauncherConstants.RotatorConstants.kP);
     double kI = SmartDashboard.getNumber("Launcher/Arm/kI", LauncherConstants.RotatorConstants.kI);
     double kD = SmartDashboard.getNumber("Launcher/Arm/kD", LauncherConstants.RotatorConstants.kD);
     double kS = SmartDashboard.getNumber("Launcher/Arm/kS", LauncherConstants.RotatorConstants.kS);
-    double kG = SmartDashboard.getNumber("Launcher/Arm/kG", LauncherConstants.RotatorConstants.kG);
     double kV = SmartDashboard.getNumber("Launcher/Arm/kV", LauncherConstants.RotatorConstants.kV);
     double kA = SmartDashboard.getNumber("Launcher/Arm/kA", LauncherConstants.RotatorConstants.kA);
 
@@ -74,14 +79,31 @@ public class LauncherRotate extends SubsystemBase {
     if (kD != pidController.getD()) pidController.setD(kD);
 
     if (kS != feedforward.getKs()) feedforward.setKs(kS);
-    if (kG != feedforward.getKg()) feedforward.setKg(kG);
     if (kV != feedforward.getKv()) feedforward.setKv(kV);
     if (kA != feedforward.getKa()) feedforward.setKa(kA);
   }
 
+  public void autoRun() {
+    if (SmartDashboard.getBoolean("Launcher/Arm/systemRun", false)) {
+      double targetAngle = SmartDashboard.getNumber("Launcher/Arm/Angle", 0);
+      setAngle(targetAngle);
+    } else {
+      stop();
+    }
+  }
+
+  public Command autoCommand() {
+    return this.run(() -> autoRun());
+  }
+  
   public void setAngle(double targetAngle) {
+    // Ensure the target angle is within the safe range
+    targetAngle = Math.max(targetAngle, LauncherConstants.RotatorConstants.minAngle);
     double pid = pidController.calculate(angle, targetAngle);
-    double ff = feedforward.calculate(targetAngle, 0);
+    SmartDashboard.putNumber("Launcher/Arm/PID/PIDOutput", pid);
+    double ff = feedforward.calculate(pidController.getSetpoint().position, pidController.getSetpoint().velocity);
+    SmartDashboard.putNumber("Launcher/Arm/PID/FeedforwardOutput", ff);
+    SmartDashboard.putNumber("Launcher/Arm/PID/TotalOutput", pid + ff);
     motor.setVoltage(pid + ff);
   }
 
@@ -91,6 +113,7 @@ public class LauncherRotate extends SubsystemBase {
 
   public void stop() {
     motor.stopMotor();
+    pidController.reset(angle);
   }
   
   public Command runAngle(double Angle) {

@@ -75,15 +75,17 @@ public final class Constants
     public static final class RotatorConstants {
       public static final int CAN = 20;
 
-      public static final double kP = 0;
+      public static final double kP = 0.025;
       public static final double kI = 0;
       public static final double kD = 0;
       
-      public static final double kS = 0;
-      public static final double kG = 0;
-      public static final double kV = 0;
-      public static final double kA = 0;
+      public static final double kS = 0.1375;
+      public static final double kV = 5.93E-3;
+      public static final double kA = 21.1E-3;
       public static final double gearRatio = 1;
+      public static final double maxVelocity = 70;
+      public static final double maxAcceleration = 70;
+      public static final double minAngle = 2;
     }
     public static final class FlywheelConstants {
       public static final int kMotorID = 23; // Set your actual CAN ID
@@ -128,7 +130,7 @@ public final class Constants
         public static final double kA = 0.0005;
 
         // PID Gains
-        public static final double kP = 0.006;
+        public static final double kP = 0.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
 
@@ -154,7 +156,7 @@ public final class Constants
         public static final double kA = 0.0005;
 
         // PID Gains
-        public static final double kP = 0.006;
+        public static final double kP = 0.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
 
