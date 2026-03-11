@@ -9,6 +9,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -69,6 +70,7 @@ public final class Constants
     public static final double TURN_CONSTANT    = 6;
     public static final double FLYWHEEL_RATE = 2000;
     public static final double FEEDER_RATE = 500;
+    public static final Translation2d POINT_TO_FACE = new Translation2d(Units.inchesToMeters(492.88), Units.inchesToMeters(158.84));
   }
 
   public static final class LauncherConstants {
@@ -200,7 +202,7 @@ public final class Constants
       public static final double kA = 0.0005;
 
       // PID Gains
-      public static final double kP = 0.006;
+      public static final double kP = 0.0;
       public static final double kI = 0.0;
       public static final double kD = 0.0;
 

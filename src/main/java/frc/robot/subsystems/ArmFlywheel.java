@@ -56,14 +56,14 @@ public class ArmFlywheel extends SubsystemBase {
 
         // INITIALIZE TUNABLE VALUES
         // We put the starting values onto SmartDashboard so they appear immediately
-        SmartDashboard.putNumber("ArmFlywheel/kP", IntakeConstants.FlywheelConstants.kP);
-        SmartDashboard.putNumber("ArmFlywheel/kI", IntakeConstants.FlywheelConstants.kI);
-        SmartDashboard.putNumber("ArmFlywheel/kD", IntakeConstants.FlywheelConstants.kD);
-        SmartDashboard.putNumber("ArmFlywheel/kS", IntakeConstants.FlywheelConstants.kS);
-        SmartDashboard.putNumber("ArmFlywheel/kV", IntakeConstants.FlywheelConstants.kV);
-        SmartDashboard.putNumber("ArmFlywheel/kA", IntakeConstants.FlywheelConstants.kA);
-        SmartDashboard.putNumber("ArmFlywheel/Target", 0);
-        SmartDashboard.putNumber("ArmFlywheel/Voltage", 0);
+        SmartDashboard.putNumber("Arm/Flywheel/kP", IntakeConstants.FlywheelConstants.kP);
+        SmartDashboard.putNumber("Arm/Flywheel/kI", IntakeConstants.FlywheelConstants.kI);
+        SmartDashboard.putNumber("Arm/Flywheel/kD", IntakeConstants.FlywheelConstants.kD);
+        SmartDashboard.putNumber("Arm/Flywheel/kS", IntakeConstants.FlywheelConstants.kS);
+        SmartDashboard.putNumber("Arm/Flywheel/kV", IntakeConstants.FlywheelConstants.kV);
+        SmartDashboard.putNumber("Arm/Flywheel/kA", IntakeConstants.FlywheelConstants.kA);
+        SmartDashboard.putNumber("Arm/Flywheel/Target", 0);
+        SmartDashboard.putNumber("Arm/Flywheel/Voltage", 0);
     }
 
     // Runs every 20ms
@@ -71,13 +71,12 @@ public class ArmFlywheel extends SubsystemBase {
     public void periodic() {
         // 1. LIVE PID TUNING
         // Read values from Dashboard. If they differ from current config, update them.
-        double p = SmartDashboard.getNumber("ArmFlywheel/kP", 0);
-        double i = SmartDashboard.getNumber("ArmFlywheel/kI", 0);
-        double d = SmartDashboard.getNumber("ArmFlywheel/kD", 0);
-        double s = SmartDashboard.getNumber("ArmFlywheel/kS", 0);
-        double v = SmartDashboard.getNumber("ArmFlywheel/kV", 0);
-        double a = SmartDashboard.getNumber("ArmFlywheel/kA", 0);
-
+        double p = SmartDashboard.getNumber("Arm/Flywheel/kP", 0);
+        double i = SmartDashboard.getNumber("Arm/Flywheel/kI", 0);
+        double d = SmartDashboard.getNumber("Arm/Flywheel/kD", 0);
+        double s = SmartDashboard.getNumber("Arm/Flywheel/kS", 0);
+        double v = SmartDashboard.getNumber("Arm/Flywheel/kV", 0);
+        double a = SmartDashboard.getNumber("Arm/Flywheel/kA", 0);
         // Only update if changed (optimization)
         if (p != m_pidController.getP()) m_pidController.setP(p);
         if (i != m_pidController.getI()) m_pidController.setI(i);
@@ -89,15 +88,15 @@ public class ArmFlywheel extends SubsystemBase {
 
         // 2. TELEMETRY FOR ADVANTAGESCOPE
         // Graph these two lines together to see how well you are tracking
-        SmartDashboard.putNumber("ArmFlywheel/SetpointRPM", m_targetRPM);
-        SmartDashboard.putNumber("ArmFlywheel/ActualRPM", m_encoder.getVelocity());
+        SmartDashboard.putNumber("Arm/Flywheel/SetpointRPM", m_targetRPM);
+        SmartDashboard.putNumber("Arm/Flywheel/ActualRPM", m_encoder.getVelocity());
         
         // Useful for seeing if you are maxing out your battery (12V)
-        SmartDashboard.putNumber("ArmFlywheel/AppliedVolts", m_motor.getAppliedOutput() * m_motor.getBusVoltage());
-        SmartDashboard.putNumber("ArmFlywheel/AppliedCurrent", m_motor.getOutputCurrent());
-        SmartDashboard.putBoolean("ArmFlywheel/atSetpoint", atSetpoint());
-        SmartDashboard.putNumber("ArmFlywheel/PIDSetpoint", m_pidController.getSetpoint().position);
-        SmartDashboard.putNumber("ArmFlywheel/PIDAcceleration", m_pidController.getSetpoint().velocity);
+        SmartDashboard.putNumber("Arm/Flywheel/AppliedVolts", m_motor.getAppliedOutput() * m_motor.getBusVoltage());
+        SmartDashboard.putNumber("Arm/Flywheel/AppliedCurrent", m_motor.getOutputCurrent());
+        SmartDashboard.putBoolean("Arm/Flywheel/atSetpoint", atSetpoint());
+        SmartDashboard.putNumber("Arm/Flywheel/PIDSetpoint", m_pidController.getSetpoint().position);
+        SmartDashboard.putNumber("Arm/Flywheel/PIDAcceleration", m_pidController.getSetpoint().velocity);
     }
 
     public boolean atSetpoint() {
@@ -135,7 +134,7 @@ public class ArmFlywheel extends SubsystemBase {
     }
 
     public void setTargetVoltage() {
-        m_motor.setVoltage(SmartDashboard.getNumber("ArmFlywheel/Voltage", 0));
+        m_motor.setVoltage(SmartDashboard.getNumber("Arm/Flywheel/Voltage", 0));
     }
 
     public void stop() {
@@ -154,7 +153,7 @@ public class ArmFlywheel extends SubsystemBase {
 
     public Command runFlywheelCommandSD() {
             return this.runEnd(
-                () -> setTargetVelocity(SmartDashboard.getNumber("ArmFlywheel/Target", 0)),
+                () -> setTargetVelocity(SmartDashboard.getNumber("Arm/Flywheel/Target", 0)),
                 this::stop
             );
         }
