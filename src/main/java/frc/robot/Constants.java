@@ -9,6 +9,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -41,7 +42,7 @@ public final class Constants
 //    public static final PIDConstants ANGLE_PID       = new PIDConstants(0.4, 0, 0.01);
 //  }
 
-  public static final boolean hasFlywheel = false;
+  public static final boolean hasFlywheel = true;
 
   
 
@@ -68,24 +69,28 @@ public final class Constants
     public static final double RIGHT_X_DEADBAND = 0.1;
     public static final double TURN_CONSTANT    = 6;
     public static final double FLYWHEEL_RATE = 2000;
+    public static final double FEEDER_RATE = 500;
+    public static final Translation2d POINT_TO_FACE = new Translation2d(Units.inchesToMeters(492.88), Units.inchesToMeters(158.84));
   }
 
   public static final class LauncherConstants {
     public static final class RotatorConstants {
-      public static final int CAN = 0;
+      public static final int CAN = 20;
 
-      public static final double kP = 0;
+      public static final double kP = 0.025;
       public static final double kI = 0;
       public static final double kD = 0;
       
-      public static final double kS = 0;
-      public static final double kG = 0;
-      public static final double kV = 0;
-      public static final double kA = 0;
-      public static final double gearRatio = 0;
+      public static final double kS = 0.1375;
+      public static final double kV = 5.93E-3;
+      public static final double kA = 21.1E-3;
+      public static final double gearRatio = 1;
+      public static final double maxVelocity = 70;
+      public static final double maxAcceleration = 70;
+      public static final double minAngle = 2;
     }
     public static final class FlywheelConstants {
-      public static final int kMotorID = 15; // Set your actual CAN ID
+      public static final int kMotorID = 23; // Set your actual CAN ID
       public static final int kCurrentLimit = 80; // Amps
 
       // Feedforward Gains (Must be tuned for RPM units)
@@ -108,7 +113,64 @@ public final class Constants
       public static final double kMaxVelocityRPM = 5000.0;
       public static final double kMaxAccelerationRPMps = 5000.0;
       
-      public static final double kGearRatio = 0;
+      public static final double kGearRatio = 1;
+
+      public static final double kTargetRPM = 3000.0;
+    }
+
+    public static final class FeederConstants {
+      public static final class Upper {
+        public static final int kMotorID = 22; // Set your actual CAN ID
+        public static final int kCurrentLimit = 80; // Amps
+
+        // Feedforward Gains (Must be tuned for RPM units)
+        // kS: Volts to overcome static friction
+        // kV: Volts per RPM (e.g., 12V / 5676 RPM ≈ 0.0021)
+        // kA: Volts per (RPM/s) acceleration
+        public static final double kS = 0.2662; 
+        // 1/459
+        public static final double kV = 0.001977;
+        // 1/500
+        public static final double kA = 0.000520;
+
+        // PID Gains
+        public static final double kP = 0.0;
+        public static final double kI = 0.0;
+        public static final double kD = 0.0;
+
+        public static final double kTargetToleranceRPM = 100.0;
+
+        public static final double kMaxVelocityRPM = 5000.0;
+        public static final double kMaxAccelerationRPMps = 5000.0;
+        
+        public static final double kGearRatio = 1;
+      }
+      public static final class Lower {
+        public static final int kMotorID = 21; // Set your actual CAN ID
+        public static final int kCurrentLimit = 80; // Amps
+
+        // Feedforward Gains (Must be tuned for RPM units)
+        // kS: Volts to overcome static friction
+        // kV: Volts per RPM (e.g., 12V / 5676 RPM ≈ 0.0021)
+        // kA: Volts per (RPM/s) acceleration
+        public static final double kS = 0.2929; 
+        // 1/459
+        public static final double kV = 0.001051;
+        // 1/500
+        public static final double kA = 0.000255;
+
+        // PID Gains
+        public static final double kP = 0.0;
+        public static final double kI = 0.0;
+        public static final double kD = 0.0;
+
+        public static final double kTargetToleranceRPM = 100.0;
+
+        public static final double kMaxVelocityRPM = 5000.0;
+        public static final double kMaxAccelerationRPMps = 5000.0;
+        
+        public static final double kGearRatio = 0.25;
+      }
     }
         
   }
@@ -123,11 +185,11 @@ public final class Constants
       public static final double kV = 0;
       public static final double kA = 0;
 
-      public static final int CAN = 0;
+      public static final int CAN = 17;
 
     }
     public static final class FlywheelConstants {
-      public static final int kMotorID = 16
+      public static final int kMotorID = 19
       ; // Set your actual CAN ID
       public static final int kCurrentLimit = 80; // Amps
 
@@ -142,7 +204,7 @@ public final class Constants
       public static final double kA = 0.0005;
 
       // PID Gains
-      public static final double kP = 0.006;
+      public static final double kP = 0.0;
       public static final double kI = 0.0;
       public static final double kD = 0.0;
 
@@ -150,7 +212,7 @@ public final class Constants
 
       public static final double kMaxVelocityRPM = 5000.0;
       public static final double kMaxAccelerationRPMps = 5000.0;
-      public static final double kGearRatio = 0;
+      public static final double kGearRatio = 1;
     }
   }
 }

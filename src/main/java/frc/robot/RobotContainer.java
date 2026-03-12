@@ -29,6 +29,10 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import swervelib.SwerveInputStream;
 import frc.robot.subsystems.Flywheel;
+import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.LauncherRotate;
+import frc.robot.subsystems.ArmFlywheel;
+import frc.robot.subsystems.Arm;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -38,8 +42,11 @@ import frc.robot.subsystems.Flywheel;
 public class RobotContainer
 {
 
+  private final LauncherRotate launcherRotate = new LauncherRotate();
+  private final ArmFlywheel armFlywheel = new ArmFlywheel();
   // Define Field2d for SmartDashboard
   public final Field2d field = new Field2d();
+  private final Arm arm = new Arm();
 
   // Define PDP
   public final PowerDistribution pdp = new PowerDistribution(0, PowerDistribution.ModuleType.kCTRE);
@@ -57,6 +64,8 @@ public class RobotContainer
   // Define flywheel system
   //TODO readd the launcher when it's installed
   private final Flywheel flywheel;
+
+  private final Feeder feeder = new Feeder();
 
   /**
    * Converts driver input into a field-relative ChassisSpeeds that is controlled by angular velocity.
@@ -121,6 +130,11 @@ public class RobotContainer
     // Initialize path planner class in swerve subsystem
     drivebase.setupPathPlanner();
     // Configure the trigger bindings
+    if (Constants.hasFlywheel) {
+      flywheel = new Flywheel();
+    } else {
+      flywheel = null;
+    }
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
     
@@ -138,12 +152,6 @@ public class RobotContainer
     
     //Put the autoChooser on the SmartDashboard
     SmartDashboard.putData("Auto Chooser", autoChooser);
-
-    if (Constants.hasFlywheel) {
-      flywheel = new Flywheel();
-    } else {
-      flywheel = null;
-    }
   }
 
   /**
@@ -177,6 +185,7 @@ public class RobotContainer
     Command driveFieldOrientedAnglularVelocityKeyboard = drivebase.driveFieldOriented(driveAngularVelocityKeyboard);
     Command driveSetpointGenKeyboard = drivebase.driveWithSetpointGeneratorFieldRelative(
         driveDirectAngleKeyboard);
+    launcherRotate.setDefaultCommand(launcherRotate.autoCommand());
 
     if (RobotBase.isSimulation())
     {
@@ -231,14 +240,16 @@ public class RobotContainer
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.rightBumper().onTrue(Commands.none());
       if (Constants.hasFlywheel) {
-        schmoXbox.leftBumper().whileTrue(flywheel.runFlywheelCommand(Constants.OperatorConstants.FLYWHEEL_RATE));
         schmoXbox.rightBumper().whileTrue(flywheel.runFlywheelCommandSD());
-        schmoXbox.a().whileTrue(flywheel.runFlywheelVoltage());
       } else {
         DriverStation.reportError("[TW_CODEBASE] Critical launcher component not installed (source: flywheel)", true);
       }
+      schmoXbox.leftTrigger().whileTrue(armFlywheel.runFlywheelCommandSD());
+      schmoXbox.rightTrigger().whileTrue(feeder.runFeederSD());
+      schmoXbox.a().whileTrue(arm.runThrow());
+      schmoXbox.y().whileTrue(arm.runLift());
+      schmoXbox.leftBumper().onTrue(launcherRotate.EncoderResetCommand());
     }
-
   }
 
   /**
