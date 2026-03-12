@@ -62,7 +62,7 @@ public class ArmFlywheel extends SubsystemBase {
         SmartDashboard.putNumber("Arm/Flywheel/kS", IntakeConstants.FlywheelConstants.kS);
         SmartDashboard.putNumber("Arm/Flywheel/kV", IntakeConstants.FlywheelConstants.kV);
         SmartDashboard.putNumber("Arm/Flywheel/kA", IntakeConstants.FlywheelConstants.kA);
-        SmartDashboard.putNumber("Arm/Flywheel/Target", 2000);
+        SmartDashboard.putNumber("Arm/Flywheel/Target", IntakeConstants.FlywheelConstants.kTargetRPM);
         SmartDashboard.putNumber("Arm/Flywheel/Voltage", 0);
     }
 

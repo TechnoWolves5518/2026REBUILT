@@ -85,21 +85,21 @@ public class Feeder extends SubsystemBase {
 
         // INITIALIZE TUNABLE VALUES
         // We put the starting values onto SmartDashboard so they appear immediately
-        SmartDashboard.putNumber("Feeder/Upper/kP", FeederConstants.Upper.kP);
-        SmartDashboard.putNumber("Feeder/Upper/kI", FeederConstants.Upper.kI);
-        SmartDashboard.putNumber("Feeder/Upper/kD", FeederConstants.Upper.kD);
-        SmartDashboard.putNumber("Feeder/Upper/kS", FeederConstants.Upper.kS);
-        SmartDashboard.putNumber("Feeder/Upper/kV", FeederConstants.Upper.kV);
-        SmartDashboard.putNumber("Feeder/Upper/kA", FeederConstants.Upper.kA);
-        SmartDashboard.putNumber("Feeder/Upper/Voltage", 0);
-        SmartDashboard.putNumber("Feeder/Lower/kP", FeederConstants.Lower.kP);
-        SmartDashboard.putNumber("Feeder/Lower/kI", FeederConstants.Lower.kI);
-        SmartDashboard.putNumber("Feeder/Lower/kD", FeederConstants.Lower.kD);
-        SmartDashboard.putNumber("Feeder/Lower/kS", FeederConstants.Lower.kS);
-        SmartDashboard.putNumber("Feeder/Lower/kV", FeederConstants.Lower.kV);
-        SmartDashboard.putNumber("Feeder/Lower/kA", FeederConstants.Lower.kA);
-        SmartDashboard.putNumber("Feeder/Lower/Voltage", 0);
-        SmartDashboard.putNumber("Feeder/Main/Target", 2500);
+        SmartDashboard.putNumber("Launcher/Feeder/Upper/kP", FeederConstants.Upper.kP);
+        SmartDashboard.putNumber("Launcher/Feeder/Upper/kI", FeederConstants.Upper.kI);
+        SmartDashboard.putNumber("Launcher/Feeder/Upper/kD", FeederConstants.Upper.kD);
+        SmartDashboard.putNumber("Launcher/Feeder/Upper/kS", FeederConstants.Upper.kS);
+        SmartDashboard.putNumber("Launcher/Feeder/Upper/kV", FeederConstants.Upper.kV);
+        SmartDashboard.putNumber("Launcher/Feeder/Upper/kA", FeederConstants.Upper.kA);
+        SmartDashboard.putNumber("Launcher/Feeder/Upper/Voltage", 0);
+        SmartDashboard.putNumber("Launcher/Feeder/Lower/kP", FeederConstants.Lower.kP);
+        SmartDashboard.putNumber("Launcher/Feeder/Lower/kI", FeederConstants.Lower.kI);
+        SmartDashboard.putNumber("Launcher/Feeder/Lower/kD", FeederConstants.Lower.kD);
+        SmartDashboard.putNumber("Launcher/Feeder/Lower/kS", FeederConstants.Lower.kS);
+        SmartDashboard.putNumber("Launcher/Feeder/Lower/kV", FeederConstants.Lower.kV);
+        SmartDashboard.putNumber("Launcher/Feeder/Lower/kA", FeederConstants.Lower.kA);
+        SmartDashboard.putNumber("Launcher/Feeder/Lower/Voltage", 0);
+        SmartDashboard.putNumber("Launcher/Feeder/Main/Target", 4000);
     }
 
     double getVelocityGeared() {
@@ -115,18 +115,18 @@ public class Feeder extends SubsystemBase {
     public void periodic() {
         // 1. LIVE PID TUNING
         // Read values from Dashboard. If they differ from current config, update them.
-        double p_upper = SmartDashboard.getNumber("Feeder/Upper/kP", 0);
-        double i_upper = SmartDashboard.getNumber("Feeder/Upper/kI", 0);
-        double d_upper = SmartDashboard.getNumber("Feeder/Upper/kD", 0);
-        double s_upper = SmartDashboard.getNumber("Feeder/Upper/kS", 0);
-        double v_upper = SmartDashboard.getNumber("Feeder/Upper/kV", 0);
-        double a_upper = SmartDashboard.getNumber("Feeder/Upper/kA", 0);
-        double p_lower = SmartDashboard.getNumber("Feeder/Lower/kP", 0);
-        double i_lower = SmartDashboard.getNumber("Feeder/Lower/kI", 0);
-        double d_lower = SmartDashboard.getNumber("Feeder/Lower/kD", 0);
-        double s_lower = SmartDashboard.getNumber("Feeder/Lower/kS", 0);
-        double v_lower = SmartDashboard.getNumber("Feeder/Lower/kV", 0);
-        double a_lower = SmartDashboard.getNumber("Feeder/Lower/kA", 0);
+        double p_upper = SmartDashboard.getNumber("Launcher/Feeder/Upper/kP", 0);
+        double i_upper = SmartDashboard.getNumber("Launcher/Feeder/Upper/kI", 0);
+        double d_upper = SmartDashboard.getNumber("Launcher/Feeder/Upper/kD", 0);
+        double s_upper = SmartDashboard.getNumber("Launcher/Feeder/Upper/kS", 0);
+        double v_upper = SmartDashboard.getNumber("Launcher/Feeder/Upper/kV", 0);
+        double a_upper = SmartDashboard.getNumber("Launcher/Feeder/Upper/kA", 0);
+        double p_lower = SmartDashboard.getNumber("Launcher/Feeder/Lower/kP", 0);
+        double i_lower = SmartDashboard.getNumber("Launcher/Feeder/Lower/kI", 0);
+        double d_lower = SmartDashboard.getNumber("Launcher/Feeder/Lower/kD", 0);
+        double s_lower = SmartDashboard.getNumber("Launcher/Feeder/Lower/kS", 0);
+        double v_lower = SmartDashboard.getNumber("Launcher/Feeder/Lower/kV", 0);
+        double a_lower = SmartDashboard.getNumber("Launcher/Feeder/Lower/kA", 0);
 
         // Only update if changed (optimization)
         if (p_upper != m_pidController.getP()) m_pidController.setP(p_upper);
@@ -145,21 +145,21 @@ public class Feeder extends SubsystemBase {
 
         // 2. TELEMETRY FOR ADVANTAGESCOPE
         // Graph these two lines together to see how well you are tracking
-        SmartDashboard.putNumber("Feeder/Main/SetpointRPM", m_targetRPM);
-        SmartDashboard.putNumber("Feeder/Upper/ActualRPM", getVelocityGeared());
-        SmartDashboard.putNumber("Feeder/Lower/ActualRPM", getVelocityGeared2());
+        SmartDashboard.putNumber("Launcher/Feeder/Main/SetpointRPM", m_targetRPM);
+        SmartDashboard.putNumber("Launcher/Feeder/Upper/ActualRPM", getVelocityGeared());
+        SmartDashboard.putNumber("Launcher/Feeder/Lower/ActualRPM", getVelocityGeared2());
         
         // Useful for seeing if you are maxing out your battery (12V)
-        SmartDashboard.putNumber("Feeder/Upper/AppliedVolts", m_motor.getAppliedOutput() * m_motor.getBusVoltage());
-        SmartDashboard.putNumber("Feeder/Upper/AppliedCurrent", m_motor.getOutputCurrent());
-        SmartDashboard.putBoolean("Feeder/Upper/atSetpoint", atSetpoint());
-        SmartDashboard.putNumber("Feeder/Upper/PIDSetpoint", m_pidController.getSetpoint().position);
-        SmartDashboard.putNumber("Feeder/Upper/PIDAcceleration", m_pidController.getSetpoint().velocity);
-        SmartDashboard.putNumber("Feeder/Lower/AppliedVolts", m_motor2.getAppliedOutput() * m_motor2.getBusVoltage());
-        SmartDashboard.putNumber("Feeder/Lower/AppliedCurrent", m_motor2.getOutputCurrent());
-        SmartDashboard.putBoolean("Feeder/Lower/atSetpoint", atSetpoint2());
-        SmartDashboard.putNumber("Feeder/Lower/PIDSetpoint", m_pidController2.getSetpoint().position);
-        SmartDashboard.putNumber("Feeder/Lower/PIDAcceleration", m_pidController2.getSetpoint().velocity);
+        SmartDashboard.putNumber("Launcher/Feeder/Upper/AppliedVolts", m_motor.getAppliedOutput() * m_motor.getBusVoltage());
+        SmartDashboard.putNumber("Launcher/Feeder/Upper/AppliedCurrent", m_motor.getOutputCurrent());
+        SmartDashboard.putBoolean("Launcher/Feeder/Upper/atSetpoint", atSetpoint());
+        SmartDashboard.putNumber("Launcher/Feeder/Upper/PIDSetpoint", m_pidController.getSetpoint().position);
+        SmartDashboard.putNumber("Launcher/Feeder/Upper/PIDAcceleration", m_pidController.getSetpoint().velocity);
+        SmartDashboard.putNumber("Launcher/Feeder/Lower/AppliedVolts", m_motor2.getAppliedOutput() * m_motor2.getBusVoltage());
+        SmartDashboard.putNumber("Launcher/Feeder/Lower/AppliedCurrent", m_motor2.getOutputCurrent());
+        SmartDashboard.putBoolean("Launcher/Feeder/Lower/atSetpoint", atSetpoint2());
+        SmartDashboard.putNumber("Launcher/Feeder/Lower/PIDSetpoint", m_pidController2.getSetpoint().position);
+        SmartDashboard.putNumber("Launcher/Feeder/Lower/PIDAcceleration", m_pidController2.getSetpoint().velocity);
     }
 
     public boolean atSetpoint() {
@@ -219,8 +219,8 @@ public class Feeder extends SubsystemBase {
     }
 
     public void setTargetVoltage() {
-        m_motor.setVoltage(SmartDashboard.getNumber("Feeder/Upper/Voltage", 0));
-        m_motor2.setVoltage(SmartDashboard.getNumber("Feeder/Lower/Voltage", 0));
+        m_motor.setVoltage(SmartDashboard.getNumber("Launcher/Feeder/Upper/Voltage", 0));
+        m_motor2.setVoltage(SmartDashboard.getNumber("Launcher/Feeder/Lower/Voltage", 0));
     }
 
 
@@ -242,7 +242,7 @@ public class Feeder extends SubsystemBase {
 
     public Command runFeederSD() {
             return this.runEnd(
-                () -> setTargetVelocity(SmartDashboard.getNumber("Feeder/Main/Target", 0)),
+                () -> setTargetVelocity(SmartDashboard.getNumber("Launcher/Feeder/Main/Target", 4000)),
                 this::stop
             );
         }

@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
@@ -167,7 +168,7 @@ public class RobotContainer
     field.setRobotPose(drivebase.getPose());
     SmartDashboard.putData("Field", field);
     // Add PDP current data for flywheel to DriverStation
-    SmartDashboard.putNumber("Flywheel/Current", pdp.getCurrent(1));
+    SmartDashboard.putNumber("System/Flywheel/Current", pdp.getCurrent(1));
     // Add system voltage and current to DriverStation
     SmartDashboard.putNumber("System/Voltage", pdp.getVoltage());
     SmartDashboard.putNumber("System/Current", pdp.getTotalCurrent());
@@ -248,7 +249,8 @@ public class RobotContainer
       schmoXbox.rightTrigger().whileTrue(feeder.runFeederSD());
       schmoXbox.a().whileTrue(arm.runThrow());
       schmoXbox.y().whileTrue(arm.runLift());
-      schmoXbox.leftBumper().onTrue(launcherRotate.EncoderResetCommand());
+      schmoXbox.b().whileTrue(armFlywheel.runFlywheelVoltage());
+      schmoXbox.button(7).onTrue(launcherRotate.EncoderResetCommand());
     }
   }
 
