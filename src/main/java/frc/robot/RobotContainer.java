@@ -32,6 +32,7 @@ import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.LauncherRotate;
 import frc.robot.subsystems.ArmFlywheel;
+import frc.robot.subsystems.Arm;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -45,6 +46,7 @@ public class RobotContainer
   private final ArmFlywheel armFlywheel = new ArmFlywheel();
   // Define Field2d for SmartDashboard
   public final Field2d field = new Field2d();
+  private final Arm arm = new Arm();
 
   // Define PDP
   public final PowerDistribution pdp = new PowerDistribution(0, PowerDistribution.ModuleType.kCTRE);
@@ -238,17 +240,15 @@ public class RobotContainer
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.rightBumper().onTrue(Commands.none());
       if (Constants.hasFlywheel) {
-        schmoXbox.leftBumper().whileTrue(flywheel.runFlywheelCommand(Constants.OperatorConstants.FLYWHEEL_RATE));
         schmoXbox.rightBumper().whileTrue(flywheel.runFlywheelCommandSD());
-        schmoXbox.a().whileTrue(flywheel.runFlywheelVoltage());
       } else {
         DriverStation.reportError("[TW_CODEBASE] Critical launcher component not installed (source: flywheel)", true);
       }
-      schmoXbox.leftTrigger().whileTrue(feeder.runFeeder(Constants.OperatorConstants.FEEDER_RATE));
+      schmoXbox.leftTrigger().whileTrue(armFlywheel.runFlywheelCommandSD());
       schmoXbox.rightTrigger().whileTrue(feeder.runFeederSD());
-      schmoXbox.x().whileTrue(feeder.runFeederVoltage());
-      schmoXbox.y().whileTrue(launcherRotate.runVoltage(SmartDashboard.getNumber("Launcher/Arm/Voltage", 0)));
-      schmoXbox.b().whileTrue(armFlywheel.runFlywheelCommandSD());
+      schmoXbox.a().whileTrue(arm.runThrow());
+      schmoXbox.y().whileTrue(arm.runLift());
+      schmoXbox.leftBumper().onTrue(launcherRotate.EncoderResetCommand());
     }
   }
 

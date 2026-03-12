@@ -61,7 +61,7 @@ public class Flywheel extends SubsystemBase {
         SmartDashboard.putNumber("Flywheel/kS", LauncherConstants.FlywheelConstants.kS);
         SmartDashboard.putNumber("Flywheel/kV", LauncherConstants.FlywheelConstants.kV);
         SmartDashboard.putNumber("Flywheel/kA", LauncherConstants.FlywheelConstants.kA);
-        SmartDashboard.putNumber("Flywheel/Target", 0);
+        SmartDashboard.putNumber("Flywheel/Target", LauncherConstants.FlywheelConstants.kTargetRPM);
         SmartDashboard.putNumber("Flywheel/Voltage", 0);
     }
 

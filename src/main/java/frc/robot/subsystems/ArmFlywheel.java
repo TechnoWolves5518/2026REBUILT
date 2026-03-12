@@ -22,7 +22,7 @@ public class ArmFlywheel extends SubsystemBase {
     private final SimpleMotorFeedforward m_feedforward;
     private final ProfiledPIDController m_pidController;
 
-    // We store the t88888888888888888888888888888888888888888888888888888888888888888888888arget RPM here so we can log it in periodic()
+    // We store the target RPM here so we can log it in periodic()
     private double m_targetRPM = 0.0;
     private boolean m_running = false;
 
@@ -62,7 +62,7 @@ public class ArmFlywheel extends SubsystemBase {
         SmartDashboard.putNumber("Arm/Flywheel/kS", IntakeConstants.FlywheelConstants.kS);
         SmartDashboard.putNumber("Arm/Flywheel/kV", IntakeConstants.FlywheelConstants.kV);
         SmartDashboard.putNumber("Arm/Flywheel/kA", IntakeConstants.FlywheelConstants.kA);
-        SmartDashboard.putNumber("Arm/Flywheel/Target", 0);
+        SmartDashboard.putNumber("Arm/Flywheel/Target", 2000);
         SmartDashboard.putNumber("Arm/Flywheel/Voltage", 0);
     }
 
@@ -153,7 +153,7 @@ public class ArmFlywheel extends SubsystemBase {
 
     public Command runFlywheelCommandSD() {
             return this.runEnd(
-                () -> setTargetVelocity(SmartDashboard.getNumber("Arm/Flywheel/Target", 0)),
+                () -> setTargetVelocity(-SmartDashboard.getNumber("Arm/Flywheel/Target", 0)),
                 this::stop
             );
         }

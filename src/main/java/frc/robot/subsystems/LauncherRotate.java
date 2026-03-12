@@ -34,8 +34,8 @@ public class LauncherRotate extends SubsystemBase {
     SmartDashboard.putNumber("Launcher/Arm/kA", LauncherConstants.RotatorConstants.kA);
     SmartDashboard.putNumber("Launcher/Arm/Voltage", 0);
     SmartDashboard.putNumber("Launcher/Arm/Current", 0);
-    SmartDashboard.putNumber("Launcher/Arm/Angle", 0);
-    SmartDashboard.putBoolean("Launcher/Arm/systemRun", false);
+    SmartDashboard.putNumber("Launcher/Arm/Angle", 40);
+    SmartDashboard.putBoolean("Launcher/Arm/systemRun", true);
     SmartDashboard.putBoolean("Launcher/Arm/systemStop", false);
 
     this.feedforward = new SimpleMotorFeedforward(
@@ -84,7 +84,7 @@ public class LauncherRotate extends SubsystemBase {
   }
 
   public void autoRun() {
-    if (SmartDashboard.getBoolean("Launcher/Arm/systemRun", false)) {
+    if (SmartDashboard.getBoolean("Launcher/Arm/systemRun", true)) {
       double targetAngle = SmartDashboard.getNumber("Launcher/Arm/Angle", 0);
       setAngle(targetAngle);
     } else {
@@ -115,6 +115,10 @@ public class LauncherRotate extends SubsystemBase {
     motor.stopMotor();
     pidController.reset(angle);
   }
+
+  public void resetEncoder() {
+    encoder.setPosition(0);
+  }
   
   public Command runAngle(double Angle) {
     return this.run(() -> setAngle(Angle));
@@ -122,6 +126,10 @@ public class LauncherRotate extends SubsystemBase {
 
   public Command runVoltage(double Voltage) {
     return this.run(() -> setVoltage(Voltage));
+  }
+  
+  public Command EncoderResetCommand() {
+    return this.runOnce(() -> resetEncoder());
   }
 
   public Command stopCommand() {

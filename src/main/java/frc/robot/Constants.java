@@ -114,6 +114,8 @@ public final class Constants
       public static final double kMaxAccelerationRPMps = 5000.0;
       
       public static final double kGearRatio = 1;
+
+      public static final double kTargetRPM = 3000.0;
     }
 
     public static final class FeederConstants {
@@ -125,11 +127,11 @@ public final class Constants
         // kS: Volts to overcome static friction
         // kV: Volts per RPM (e.g., 12V / 5676 RPM ≈ 0.0021)
         // kA: Volts per (RPM/s) acceleration
-        public static final double kS = 0.15; 
+        public static final double kS = 0.2662; 
         // 1/459
-        public static final double kV = 0.0021;
+        public static final double kV = 0.001977;
         // 1/500
-        public static final double kA = 0.0005;
+        public static final double kA = 0.000520;
 
         // PID Gains
         public static final double kP = 0.0;
@@ -151,11 +153,11 @@ public final class Constants
         // kS: Volts to overcome static friction
         // kV: Volts per RPM (e.g., 12V / 5676 RPM ≈ 0.0021)
         // kA: Volts per (RPM/s) acceleration
-        public static final double kS = 0.15; 
+        public static final double kS = 0.2929; 
         // 1/459
-        public static final double kV = 0.0021;
+        public static final double kV = 0.001051;
         // 1/500
-        public static final double kA = 0.0005;
+        public static final double kA = 0.000255;
 
         // PID Gains
         public static final double kP = 0.0;
@@ -167,7 +169,7 @@ public final class Constants
         public static final double kMaxVelocityRPM = 5000.0;
         public static final double kMaxAccelerationRPMps = 5000.0;
         
-        public static final double kGearRatio = 1;
+        public static final double kGearRatio = 0.25;
       }
     }
         

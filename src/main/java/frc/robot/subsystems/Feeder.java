@@ -99,15 +99,15 @@ public class Feeder extends SubsystemBase {
         SmartDashboard.putNumber("Feeder/Lower/kV", FeederConstants.Lower.kV);
         SmartDashboard.putNumber("Feeder/Lower/kA", FeederConstants.Lower.kA);
         SmartDashboard.putNumber("Feeder/Lower/Voltage", 0);
-        SmartDashboard.putNumber("Feeder/Main/Target", 0);
+        SmartDashboard.putNumber("Feeder/Main/Target", 2500);
     }
 
     double getVelocityGeared() {
-        return m_encoder.getVelocity() * FeederConstants.Upper.kGearRatio;
+        return m_encoder.getVelocity();
     }
 
     double getVelocityGeared2() {
-        return m_encoder2.getVelocity() * FeederConstants.Lower.kGearRatio;
+        return m_encoder2.getVelocity();
     }
 
     // Runs every 20ms
@@ -242,7 +242,7 @@ public class Feeder extends SubsystemBase {
 
     public Command runFeederSD() {
             return this.runEnd(
-                () -> setTargetVelocity(SmartDashboard.getNumber("Flywheel/Target", 0)),
+                () -> setTargetVelocity(SmartDashboard.getNumber("Feeder/Main/Target", 0)),
                 this::stop
             );
         }

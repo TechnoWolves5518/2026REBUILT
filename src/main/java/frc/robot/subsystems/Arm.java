@@ -12,6 +12,7 @@ import frc.robot.Constants;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Arm extends SubsystemBase {
@@ -42,30 +43,43 @@ public class Arm extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     angle = encoder.getPosition();
-    SmartDashboard.putNumber("Elevator/ArmEncoderPosition", angle);
-    SmartDashboard.putNumber("Elevator/ArmEncoderVelocity", encoder.getVelocity());
+    SmartDashboard.putNumber("Arm/Rotator/EncoderPosition", angle);
+    SmartDashboard.putNumber("Arm/Rotator/EncoderVelocity", encoder.getVelocity());
+    SmartDashboard.putNumber("Arm/Rotator/AppliedCurrent", motor.getOutputCurrent());
   }
 
-  public void setAngle(double targetAngle) {
-    double pid = pidController.calculate(angle, targetAngle);
-    double ff = feedforward.calculate(targetAngle, 0);
-    motor.setVoltage(pid + ff);
+  public void throwArm() {
+    motor.setVoltage(5);
+    setCoastMode();
   }
 
-  public void setVoltage(double targetVoltage) {
-    motor.setVoltage(targetVoltage);
+  public void liftArm() {
+    motor.setVoltage(-5);
+    setBrakeMode();
   }
 
   public void stop() {
     motor.stopMotor();
   }
   
-  public Command runAngle(double Angle) {
-    return this.run(() -> setAngle(Angle));
+  private void setBrakeMode() {
+    SparkMaxConfig config = new SparkMaxConfig();
+    config.idleMode(SparkMaxConfig.IdleMode.kBrake);
+    motor.configure(config, SparkMax.ResetMode.kNoResetSafeParameters, SparkMax.PersistMode.kNoPersistParameters);
   }
 
-  public Command runVoltage(double Voltage) {
-    return this.run(() -> setVoltage(Voltage));
+  private void setCoastMode() {
+    SparkMaxConfig config = new SparkMaxConfig();
+    config.idleMode(SparkMaxConfig.IdleMode.kCoast);
+    motor.configure(config, SparkMax.ResetMode.kNoResetSafeParameters, SparkMax.PersistMode.kNoPersistParameters);
+  }
+  
+  public Command runThrow() {
+    return this.runEnd(this::throwArm, this::stop);
+  }
+
+  public Command runLift() {
+    return this.runEnd(this::liftArm, this::stop);
   }
 
   public Command stopCommand() {
