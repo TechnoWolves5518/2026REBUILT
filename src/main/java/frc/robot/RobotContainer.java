@@ -193,7 +193,7 @@ public class RobotContainer
 
     if (RobotBase.isSimulation())
     {
-      drivebase.setDefaultCommand(driveFieldOrientedDirectAngleKeyboard);
+      drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
     } else
     {
       drivebase.setDefaultCommand(driveFieldOrientedAnglularVelocity);
@@ -242,7 +242,7 @@ public class RobotContainer
       driverXbox.start().whileTrue(Commands.none());
       driverXbox.back().whileTrue(Commands.none());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      driverXbox.rightBumper().onTrue(Commands.none());
+      driverXbox.rightTrigger().whileTrue(drivebase.autoPointWhileDriving(() -> driverXbox.getLeftY() * -1, () -> driverXbox.getLeftX() * -1));
       if (Constants.hasFlywheel) {
         schmoXbox.rightBumper().whileTrue(flywheel.runFlywheelCommandSD());
       } else {

@@ -17,6 +17,9 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
+import com.pathplanner.lib.util.FlippingUtil;
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -32,6 +35,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
+import frc.robot.Constants.DrivebaseConstants;
 import frc.robot.subsystems.swervedrive.Vision.Cameras;
 import java.io.File;
 import java.io.IOException;
@@ -110,6 +114,63 @@ public class SwerveSubsystem extends SubsystemBase
     }
     setupPathPlanner();
   }
+
+  public class Targeting {
+    // Field position of the thing you want to point at
+    // This is defined from the blue alliance perspective.
+    // TODO: Update this value to the correct target position.
+    public static Translation2d HubPose;
+    
+
+    Targeting() {
+      if (DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Red) {
+        HubPose = FlippingUtil.flipFieldPose(DrivebaseConstants.AutoAngleConstants.BlueHubPose).getTranslation();
+      } else {
+        HubPose = DrivebaseConstants.AutoAngleConstants.BlueHubPose.getTranslation(); 
+      }
+    }
+
+    public Rotation2d getHeadingToTarget(Pose2d robotPose) {
+        Translation2d robotPos = robotPose.getTranslation();
+
+        // PathPlanner keeps the origin on the blue side, so for the red alliance we transform the X-coordinate.
+        Translation2d targetPos = HubPose;
+        Translation2d delta = targetPos.minus(robotPos);
+        return new Rotation2d(Math.atan2(delta.getY(), delta.getX()));
+    }
+
+}
+
+public Command autoPointWhileDriving(
+        DoubleSupplier xSupplier,   // forward/back (m/s or joystick)
+        DoubleSupplier ySupplier    // left/right
+) {
+    PIDController thetaPID = new PIDController(DrivebaseConstants.AutoAngleConstants.ANGLE_KP,
+            DrivebaseConstants.AutoAngleConstants.ANGLE_KI,
+            DrivebaseConstants.AutoAngleConstants.ANGLE_KD);
+    thetaPID.enableContinuousInput(-Math.PI, Math.PI);
+
+    return run(() -> {
+        Pose2d pose = getPose();
+        Rotation2d targetHeading = new Targeting().getHeadingToTarget(pose);
+
+        double omega = thetaPID.calculate(
+            pose.getRotation().getRadians(),
+            targetHeading.getRadians()
+        );
+
+        ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+            xSupplier.getAsDouble(),
+            ySupplier.getAsDouble(),
+            omega,
+            pose.getRotation()
+        );
+
+        setChassisSpeeds(speeds);
+    }).finallyDo(interrupted -> thetaPID.close()).withName("AutoPointDrive");
+}
+
+
 
   /**
    * Construct the swerve drive.

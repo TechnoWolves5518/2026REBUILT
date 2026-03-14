@@ -7,8 +7,12 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
+
+
 
 
 /**
@@ -44,6 +48,16 @@ public final class Constants
 
     // Hold time on motor brakes when disabled
     public static final double WHEEL_LOCK_TIME = 10; // seconds
+
+    public static final class AutoAngleConstants {
+      public static final double ANGLE_KP = 5;
+      public static final double ANGLE_KI = 0;
+      public static final double ANGLE_KD = 0;
+
+      private static final double BlueHubPoseX = Units.inchesToMeters(181.56);
+      private static final double BlueHubPoseY = Units.inchesToMeters(158.32);
+      public static final Pose2d BlueHubPose = new Pose2d(BlueHubPoseX, BlueHubPoseY, new Rotation2d());
+    }
   }
 
   public static class VisionSystem {
