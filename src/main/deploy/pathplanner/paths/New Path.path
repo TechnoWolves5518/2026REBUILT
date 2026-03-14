@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.6632502965599059,
+        "x": 0.5126215895610919,
         "y": 4.911874258600237
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.4056346381969167,
-        "y": 4.868837485172005
+        "x": 1.5716215895610919,
+        "y": 4.911874258600237
       },
       "isLocked": false,
       "linkedName": null
@@ -32,22 +32,50 @@
     },
     {
       "anchor": {
-        "x": 3.3960854092526698,
-        "y": 4.018861209964412
+        "x": 2.9992880794737458,
+        "y": 4.064039735096057
       },
       "prevControl": {
-        "x": 2.739774614472124,
-        "y": 3.9650652431791222
+        "x": 2.3429772846932,
+        "y": 4.010243768310767
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.2816229116945044,
+      "rotationDegrees": 180.0
+    },
+    {
+      "waypointRelativePos": 1.8233890214797077,
+      "rotationDegrees": 0.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "throwArm",
+      "waypointRelativePos": 0.0,
+      "endWaypointRelativePos": 0.40132304299888927,
+      "command": null
+    },
+    {
+      "name": "runFlywheel",
+      "waypointRelativePos": 0.0,
+      "endWaypointRelativePos": 2.0,
+      "command": null
+    },
+    {
+      "name": "runFeeder",
+      "waypointRelativePos": 2.0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -64,7 +92,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 178.15238973400534
   },
   "useDefaultConstraints": false
 }

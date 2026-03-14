@@ -8,6 +8,8 @@ import java.io.File;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.events.Event;
+import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -141,6 +143,9 @@ public class RobotContainer
     
     //Create the NamedCommands that will be used in PathPlanner
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
+    new EventTrigger("runFLywheel").whileTrue(flywheel.runFlywheelCommandSD());
+    new EventTrigger("runFeeder").whileTrue(feeder.runFeederSD());
+    new EventTrigger("throwArm").whileTrue(arm.runThrow());
 
     //Have the autoChooser pull in all PathPlanner autos as options
     autoChooser = AutoBuilder.buildAutoChooser();
