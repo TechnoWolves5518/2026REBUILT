@@ -17,11 +17,15 @@ import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.units.Units;
 
+import com.revrobotics.sim.SparkMaxSim;
+import edu.wpi.first.math.system.plant.DCMotor;
+
 public class LauncherRotate extends SubsystemBase {
   private double angle; // Current height of the arm in meters
   private ProfiledPIDController pidController; // PID controller for arm height control
   private SimpleMotorFeedforward feedforward; // Feedforward for arm control
   private SparkMax motor;
+  private SparkMaxSim motorSim;
   private RelativeEncoder encoder;
   /** Creates a new LauncherRotate. */
 
@@ -54,6 +58,7 @@ public class LauncherRotate extends SubsystemBase {
       )
     );
     this.motor = new SparkMax(LauncherConstants.RotatorConstants.CAN, SparkLowLevel.MotorType.kBrushless);
+    this.motorSim = new SparkMaxSim(motor, DCMotor.getNEO(1));
     this.encoder = motor.getEncoder();
   }
 

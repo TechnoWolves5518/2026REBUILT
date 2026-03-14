@@ -16,15 +16,22 @@ import com.revrobotics.RelativeEncoder;
 
 import frc.robot.Constants.LauncherConstants.FeederConstants;
 
+import com.revrobotics.sim.SparkMaxSim;
+import edu.wpi.first.math.system.plant.DCMotor;
+
 public class Feeder extends SubsystemBase {
     private final SparkMax m_motor;
     private final SparkMax m_motor2;
+    private final SparkMaxSim m_motorSim;
+    private final SparkMaxSim m_motorSim2;
     private final RelativeEncoder m_encoder;
     private final RelativeEncoder m_encoder2;
     private final SimpleMotorFeedforward m_feedforward;
     private final SimpleMotorFeedforward m_feedforward2;
     private final ProfiledPIDController m_pidController;
     private final ProfiledPIDController m_pidController2;
+
+    
 
 
     // We store the target RPM here so we can log it in periodic()
@@ -34,8 +41,9 @@ public class Feeder extends SubsystemBase {
     public Feeder() {
         m_motor = new SparkMax(FeederConstants.Upper.kMotorID, MotorType.kBrushless);
         m_motor2 = new SparkMax(FeederConstants.Lower.kMotorID, MotorType.kBrushless);
-        
-        
+        m_motorSim = new SparkMaxSim(m_motor, DCMotor.getNEO(1));
+        m_motorSim2 = new SparkMaxSim(m_motor2, DCMotor.getNEO(1));
+
         SparkMaxConfig config = new SparkMaxConfig();
         config.smartCurrentLimit(FeederConstants.Upper.kCurrentLimit);
         config.idleMode(IdleMode.kCoast);
