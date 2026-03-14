@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.sim.SparkMaxSim;
+import edu.wpi.first.math.system.plant.DCMotor;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -20,6 +22,7 @@ public class Arm extends SubsystemBase {
   private PIDController pidController; // PID controller for arm height control
   private ArmFeedforward feedforward; // Feedforward for arm control
   private SparkMax motor;
+  private SparkMaxSim motorSim;
   private SparkAbsoluteEncoder encoder;
   /** Creates a new Arm. */
   public Arm() {
@@ -36,6 +39,7 @@ public class Arm extends SubsystemBase {
       Constants.IntakeConstants.ArmConstants.kD
     );
     this.motor = new SparkMax(Constants.IntakeConstants.ArmConstants.CAN, SparkLowLevel.MotorType.kBrushless);
+    this.motorSim = new SparkMaxSim(motor, DCMotor.getNEO(1));
     this.encoder = motor.getAbsoluteEncoder();
   }
 

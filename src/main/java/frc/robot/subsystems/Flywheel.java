@@ -16,8 +16,12 @@ import com.revrobotics.RelativeEncoder;
 
 import frc.robot.Constants.LauncherConstants;
 
+import com.revrobotics.sim.SparkMaxSim;
+import edu.wpi.first.math.system.plant.DCMotor;
+
 public class Flywheel extends SubsystemBase {
     private final SparkMax m_motor;
+    private final SparkMaxSim m_motorSim;
     private final RelativeEncoder m_encoder;
     private final SimpleMotorFeedforward m_feedforward;
     private final ProfiledPIDController m_pidController;
@@ -28,6 +32,7 @@ public class Flywheel extends SubsystemBase {
 
     public Flywheel() {
         m_motor = new SparkMax(LauncherConstants.FlywheelConstants.kMotorID, MotorType.kBrushless);
+        m_motorSim = new SparkMaxSim(m_motor, DCMotor.getNEO(1));
         
         SparkMaxConfig config = new SparkMaxConfig();
         config.smartCurrentLimit(LauncherConstants.FlywheelConstants.kCurrentLimit);

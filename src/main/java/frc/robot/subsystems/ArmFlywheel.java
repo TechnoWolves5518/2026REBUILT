@@ -16,8 +16,12 @@ import com.revrobotics.RelativeEncoder;
 
 import frc.robot.Constants.IntakeConstants;
 
+import com.revrobotics.sim.SparkMaxSim;
+import edu.wpi.first.math.system.plant.DCMotor;
+
 public class ArmFlywheel extends SubsystemBase {
     private final SparkMax m_motor;
+    private final SparkMaxSim m_motorSim;
     private final RelativeEncoder m_encoder;
     private final SimpleMotorFeedforward m_feedforward;
     private final ProfiledPIDController m_pidController;
@@ -34,6 +38,7 @@ public class ArmFlywheel extends SubsystemBase {
         config.idleMode(IdleMode.kCoast);
         
         m_motor.configure(config, SparkMax.ResetMode.kResetSafeParameters, SparkMax.PersistMode.kPersistParameters);
+        m_motorSim = new SparkMaxSim(m_motor, DCMotor.getNEO(1));
 
         m_encoder = m_motor.getEncoder();
 
