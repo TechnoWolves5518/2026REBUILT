@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.auto.AutoShoot;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import swervelib.SwerveInputStream;
 import frc.robot.subsystems.Flywheel;
@@ -257,6 +258,7 @@ public class RobotContainer
     }
   }
 
+  AutoShoot Auto = new AutoShoot();
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -265,8 +267,9 @@ public class RobotContainer
   public Command getAutonomousCommand()
   {
     // Pass in the selected auto from the SmartDashboard as our desired autnomous commmand 
-    return autoChooser.getSelected();
-  }
+    return new AutoShoot();
+      
+    };
 
   public void setMotorBrake(boolean brake)
   {
