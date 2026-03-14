@@ -8,7 +8,6 @@ import java.io.File;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.events.Event;
 import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -25,7 +24,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
@@ -65,7 +63,6 @@ public class RobotContainer
   private final SendableChooser<Command> autoChooser;
 
   // Define flywheel system
-  //TODO readd the launcher when it's installed
   private final Flywheel flywheel;
 
   private final Feeder feeder = new Feeder();
@@ -180,6 +177,7 @@ public class RobotContainer
   }
 
 
+  @SuppressWarnings("unused")
   private void configureBindings()
   {
     Command driveFieldOrientedDirectAngle      = drivebase.driveFieldOriented(driveDirectAngle);

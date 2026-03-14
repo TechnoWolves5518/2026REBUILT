@@ -4,8 +4,7 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ArmFeedforward;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
@@ -19,25 +18,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Arm extends SubsystemBase {
   private double angle; // Current height of the arm in meters
-  private PIDController pidController; // PID controller for arm height control
-  private ArmFeedforward feedforward; // Feedforward for arm control
   private SparkMax motor;
+  @SuppressWarnings("unused")
   private SparkMaxSim motorSim;
   private SparkAbsoluteEncoder encoder;
   /** Creates a new Arm. */
   public Arm() {
-    this.feedforward = new ArmFeedforward(
-      Constants.IntakeConstants.ArmConstants.kS,
-      Constants.IntakeConstants.ArmConstants.kG,
-      Constants.IntakeConstants.ArmConstants.kV,
-      Constants.IntakeConstants.ArmConstants.kA
-    );
     angle = 0.0; // Initialize the arm angle to 0 degrees
-    this.pidController = new PIDController(
-      Constants.IntakeConstants.ArmConstants.kP,
-      Constants.IntakeConstants.ArmConstants.kI,
-      Constants.IntakeConstants.ArmConstants.kD
-    );
     this.motor = new SparkMax(Constants.IntakeConstants.ArmConstants.CAN, SparkLowLevel.MotorType.kBrushless);
     this.motorSim = new SparkMaxSim(motor, DCMotor.getNEO(1));
     this.encoder = motor.getAbsoluteEncoder();
@@ -66,12 +53,14 @@ public class Arm extends SubsystemBase {
     motor.stopMotor();
   }
   
+  @SuppressWarnings("removal")
   private void setBrakeMode() {
     SparkMaxConfig config = new SparkMaxConfig();
     config.idleMode(SparkMaxConfig.IdleMode.kBrake);
     motor.configure(config, SparkMax.ResetMode.kNoResetSafeParameters, SparkMax.PersistMode.kNoPersistParameters);
   }
 
+  @SuppressWarnings("removal")
   private void setCoastMode() {
     SparkMaxConfig config = new SparkMaxConfig();
     config.idleMode(SparkMaxConfig.IdleMode.kCoast);

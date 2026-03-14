@@ -21,6 +21,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 
 public class ArmFlywheel extends SubsystemBase {
     private final SparkMax m_motor;
+    @SuppressWarnings("unused")
     private final SparkMaxSim m_motorSim;
     private final RelativeEncoder m_encoder;
     private final SimpleMotorFeedforward m_feedforward;
@@ -30,6 +31,7 @@ public class ArmFlywheel extends SubsystemBase {
     private double m_targetRPM = 0.0;
     private boolean m_running = false;
 
+    @SuppressWarnings("removal")
     public ArmFlywheel() {
         m_motor = new SparkMax(IntakeConstants.FlywheelConstants.kMotorID, MotorType.kBrushless);
         

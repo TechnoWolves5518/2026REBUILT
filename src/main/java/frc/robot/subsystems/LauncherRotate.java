@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -15,7 +14,6 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.units.Units;
 
 import com.revrobotics.sim.SparkMaxSim;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -25,6 +23,7 @@ public class LauncherRotate extends SubsystemBase {
   private ProfiledPIDController pidController; // PID controller for arm height control
   private SimpleMotorFeedforward feedforward; // Feedforward for arm control
   private SparkMax motor;
+  @SuppressWarnings("unused")
   private SparkMaxSim motorSim;
   private RelativeEncoder encoder;
   /** Creates a new LauncherRotate. */

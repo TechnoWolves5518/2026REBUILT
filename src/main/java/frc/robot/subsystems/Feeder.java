@@ -22,7 +22,9 @@ import edu.wpi.first.math.system.plant.DCMotor;
 public class Feeder extends SubsystemBase {
     private final SparkMax m_motor;
     private final SparkMax m_motor2;
+    @SuppressWarnings("unused")
     private final SparkMaxSim m_motorSim;
+    @SuppressWarnings("unused")
     private final SparkMaxSim m_motorSim2;
     private final RelativeEncoder m_encoder;
     private final RelativeEncoder m_encoder2;
@@ -38,6 +40,7 @@ public class Feeder extends SubsystemBase {
     private double m_targetRPM = 0.0;
     private boolean m_running = false;
 
+    @SuppressWarnings("removal")
     public Feeder() {
         m_motor = new SparkMax(FeederConstants.Upper.kMotorID, MotorType.kBrushless);
         m_motor2 = new SparkMax(FeederConstants.Lower.kMotorID, MotorType.kBrushless);
