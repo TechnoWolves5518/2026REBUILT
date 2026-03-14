@@ -19,7 +19,8 @@ import com.revrobotics.sim.SparkMaxSim;
 import edu.wpi.first.math.system.plant.DCMotor;
 
 public class LauncherRotate extends SubsystemBase {
-  private double angle; // Current height of the arm in meters
+  private double angle; // Current angle of the arm in degrees
+  private double setpoint;
   private ProfiledPIDController pidController; // PID controller for arm height control
   private SimpleMotorFeedforward feedforward; // Feedforward for arm control
   private SparkMax motor;
@@ -37,10 +38,11 @@ public class LauncherRotate extends SubsystemBase {
     SmartDashboard.putNumber("Launcher/Arm/kA", LauncherConstants.RotatorConstants.kA);
     SmartDashboard.putNumber("Launcher/Arm/Voltage", 0);
     SmartDashboard.putNumber("Launcher/Arm/Current", 0);
-    SmartDashboard.putNumber("Launcher/Arm/Angle", 40);
+    SmartDashboard.putNumber("Launcher/Arm/Angle", LauncherConstants.RotatorConstants.defaultSetpoint);
     SmartDashboard.putBoolean("Launcher/Arm/systemRun", true);
     SmartDashboard.putBoolean("Launcher/Arm/systemStop", false);
 
+    this.setpoint = LauncherConstants.RotatorConstants.defaultSetpoint;
     this.feedforward = new SimpleMotorFeedforward(
       LauncherConstants.RotatorConstants.kS,
       LauncherConstants.RotatorConstants.kV,

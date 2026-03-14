@@ -111,6 +111,7 @@ public class Robot extends TimedRobot
 
     //Print the selected autonomous command upon autonomous init
     System.out.println("Auto selected: " + m_autonomousCommand);
+    DriverStation.reportWarning("Auto selected: " + m_autonomousCommand, false);
 
     // schedule the autonomous command selected in the autoChooser
     if (m_autonomousCommand != null)
