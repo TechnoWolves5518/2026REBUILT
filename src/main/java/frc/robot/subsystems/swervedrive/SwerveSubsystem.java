@@ -116,60 +116,43 @@ public class SwerveSubsystem extends SubsystemBase
     setupPathPlanner();
   }
 
-  public class Targeting {
-    // Field position of the thing you want to point at
-    // This is defined from the blue alliance perspective.
-    // TODO: Update this value to the correct target position.
-    public static Translation2d HubPose;
-    
-
-    Targeting() {
-      if (DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Red) {
-        HubPose = FlippingUtil.flipFieldPose(DrivebaseConstants.AutoAngleConstants.BlueHubPose).getTranslation();
-      } else {
-        HubPose = DrivebaseConstants.AutoAngleConstants.BlueHubPose.getTranslation(); 
-      }
-    }
-
-    public Rotation2d getHeadingToTarget(Pose2d robotPose) {
-        Translation2d robotPos = robotPose.getTranslation();
-
-        // PathPlanner keeps the origin on the blue side, so for the red alliance we transform the X-coordinate.
-        Translation2d targetPos = HubPose;
-        Translation2d delta = targetPos.minus(robotPos);
-        return new Rotation2d(Math.atan2(delta.getY(), delta.getX()));
-    }
-
-}
-
-public Command autoPointWhileDriving(
-        DoubleSupplier xSupplier,   // forward/back (m/s or joystick)
-        DoubleSupplier ySupplier    // left/right
-) {
+  public Command autoPointWhileDriving(DoubleSupplier xSupplier, DoubleSupplier ySupplier)
+  {
     PIDController thetaPID = new PIDController(DrivebaseConstants.AutoAngleConstants.ANGLE_KP,
-            DrivebaseConstants.AutoAngleConstants.ANGLE_KI,
-            DrivebaseConstants.AutoAngleConstants.ANGLE_KD);
+                                               DrivebaseConstants.AutoAngleConstants.ANGLE_KI,
+                                               DrivebaseConstants.AutoAngleConstants.ANGLE_KD);
     thetaPID.enableContinuousInput(-Math.PI, Math.PI);
 
     return run(() -> {
-        Pose2d pose = getPose();
-        Rotation2d targetHeading = new Targeting().getHeadingToTarget(pose);
+      Pose2d pose = getPose();
+      Translation2d targetPose = DrivebaseConstants.AutoAngleConstants.BlueHubPose.getTranslation();
+      boolean isRed = false;
+      var alliance = DriverStation.getAlliance();
+      if (alliance.isPresent() && alliance.get() == DriverStation.Alliance.Red)
+      {
+        isRed = true;
+        targetPose = FlippingUtil.flipFieldPose(DrivebaseConstants.AutoAngleConstants.BlueHubPose).getTranslation();
+      }
 
-        double omega = thetaPID.calculate(
-            pose.getRotation().getRadians(),
-            targetHeading.getRadians()
-        );
+      Translation2d delta = targetPose.minus(pose.getTranslation());
+      Rotation2d targetHeading = new Rotation2d(Math.atan2(delta.getY(), delta.getX()));
 
-        ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-            xSupplier.getAsDouble(),
-            ySupplier.getAsDouble(),
-            omega,
-            pose.getRotation()
-        );
+      double omega = thetaPID.calculate(pose.getRotation().getRadians(), targetHeading.getRadians());
 
-        setChassisSpeeds(speeds);
+      double xVelocity = xSupplier.getAsDouble() * swerveDrive.getMaximumChassisVelocity();
+      double yVelocity = ySupplier.getAsDouble() * swerveDrive.getMaximumChassisVelocity();
+
+      if (isRed)
+      {
+        xVelocity = -xVelocity;
+        yVelocity = -yVelocity;
+      }
+
+      ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(xVelocity, yVelocity, omega, pose.getRotation());
+
+      setChassisSpeeds(speeds);
     }).finallyDo(interrupted -> thetaPID.close()).withName("AutoPointDrive");
-}
+  }
 
 
 
