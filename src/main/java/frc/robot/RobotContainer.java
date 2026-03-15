@@ -136,7 +136,7 @@ public class RobotContainer
     
     //Create the NamedCommands that will be used in PathPlanner
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
-    new EventTrigger("runFLywheel").onTrue(flywheel.runFlywheelCommandSD());
+    new EventTrigger("runFlywheel").onTrue(flywheel.runFlywheelCommandSD());
     new EventTrigger("runFeeder").onTrue(feeder.runFeederSD());
     new EventTrigger("throwArm").whileTrue(arm.runThrow());
 
