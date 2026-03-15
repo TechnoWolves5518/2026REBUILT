@@ -73,7 +73,7 @@ public class LauncherRotate extends SubsystemBase {
 
   public void autoRun() {
     if (SmartDashboard.getBoolean("Launcher/Arm/systemRun", true)) {
-      double targetAngle = LauncherConstants.RotatorConstants.defaultSetpoint;
+      double targetAngle = setpoint;
       setAngle(targetAngle);
     } else {
       stop();
