@@ -14,6 +14,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.RelativeEncoder;
 
+import frc.robot.Constants;
 import frc.robot.Constants.LauncherConstants;
 
 import com.revrobotics.sim.SparkMaxSim;
@@ -68,17 +69,19 @@ public class Flywheel extends SubsystemBase {
     // Runs every 20ms
     @Override
     public void periodic() {
-        // 2. TELEMETRY FOR ADVANTAGESCOPE
-        // Graph these two lines together to see how well you are tracking
-        SmartDashboard.putNumber("Launcher/Flywheel/SetpointRPM", m_targetRPM);
-        SmartDashboard.putNumber("Launcher/Flywheel/ActualRPM", m_encoder.getVelocity());
-        
-        // Useful for seeing if you are maxing out your battery (12V)
-        SmartDashboard.putNumber("Launcher/Flywheel/AppliedVolts", m_motor.getAppliedOutput() * m_motor.getBusVoltage());
-        SmartDashboard.putNumber("Launcher/Flywheel/AppliedCurrent", m_motor.getOutputCurrent());
-        SmartDashboard.putBoolean("Launcher/Flywheel/atSetpoint", atSetpoint());
-        SmartDashboard.putNumber("Launcher/Flywheel/PIDSetpoint", m_pidController.getSetpoint().position);
-        SmartDashboard.putNumber("Launcher/Flywheel/PIDAcceleration", m_pidController.getSetpoint().velocity);
+        if (Constants.TUNING_MODE) {
+            // 2. TELEMETRY FOR ADVANTAGESCOPE
+            // Graph these two lines together to see how well you are tracking
+            SmartDashboard.putNumber("Launcher/Flywheel/SetpointRPM", m_targetRPM);
+            SmartDashboard.putNumber("Launcher/Flywheel/ActualRPM", m_encoder.getVelocity());
+            
+            // Useful for seeing if you are maxing out your battery (12V)
+            SmartDashboard.putNumber("Launcher/Flywheel/AppliedVolts", m_motor.getAppliedOutput() * m_motor.getBusVoltage());
+            SmartDashboard.putNumber("Launcher/Flywheel/AppliedCurrent", m_motor.getOutputCurrent());
+            SmartDashboard.putBoolean("Launcher/Flywheel/atSetpoint", atSetpoint());
+            SmartDashboard.putNumber("Launcher/Flywheel/PIDSetpoint", m_pidController.getSetpoint().position);
+            SmartDashboard.putNumber("Launcher/Flywheel/PIDAcceleration", m_pidController.getSetpoint().velocity);
+        }
     }
 
     public boolean atSetpoint() {

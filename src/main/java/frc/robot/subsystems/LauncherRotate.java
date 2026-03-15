@@ -9,6 +9,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.Constants.LauncherConstants;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel;
@@ -65,10 +66,12 @@ public class LauncherRotate extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     angle = encoder.getPosition() * 360;
-    SmartDashboard.putNumber("Launcher/Arm/EncoderPosition", angle);
-    SmartDashboard.putNumber("Launcher/Arm/EncoderVelocity", encoder.getVelocity());
-    SmartDashboard.putNumber("Launcher/Arm/AppliedVoltage", motor.getAppliedOutput() * motor.getBusVoltage());
-    SmartDashboard.putNumber("Launcher/Arm/AppliedCurrent", motor.getOutputCurrent());
+    if (Constants.TUNING_MODE) {
+      SmartDashboard.putNumber("Launcher/Arm/EncoderPosition", angle);
+      SmartDashboard.putNumber("Launcher/Arm/EncoderVelocity", encoder.getVelocity());
+      SmartDashboard.putNumber("Launcher/Arm/AppliedVoltage", motor.getAppliedOutput() * motor.getBusVoltage());
+      SmartDashboard.putNumber("Launcher/Arm/AppliedCurrent", motor.getOutputCurrent());
+    }
   }
 
   public void autoRun() {

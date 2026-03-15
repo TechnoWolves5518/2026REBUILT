@@ -14,6 +14,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.RelativeEncoder;
 
+import frc.robot.Constants;
 import frc.robot.Constants.LauncherConstants.FeederConstants;
 
 import com.revrobotics.sim.SparkMaxSim;
@@ -124,25 +125,25 @@ public class Feeder extends SubsystemBase {
     // Runs every 20ms
     @Override
     public void periodic() {
-
-
-        // 2. TELEMETRY FOR ADVANTAGESCOPE
-        // Graph these two lines together to see how well you are tracking
-        SmartDashboard.putNumber("Launcher/Feeder/Main/SetpointRPM", m_targetRPM);
-        SmartDashboard.putNumber("Launcher/Feeder/Upper/ActualRPM", getVelocityGeared());
-        SmartDashboard.putNumber("Launcher/Feeder/Lower/ActualRPM", getVelocityGeared2());
-        
-        // Useful for seeing if you are maxing out your battery (12V)
-        SmartDashboard.putNumber("Launcher/Feeder/Upper/AppliedVolts", m_motor.getAppliedOutput() * m_motor.getBusVoltage());
-        SmartDashboard.putNumber("Launcher/Feeder/Upper/AppliedCurrent", m_motor.getOutputCurrent());
-        SmartDashboard.putBoolean("Launcher/Feeder/Upper/atSetpoint", atSetpoint());
-        SmartDashboard.putNumber("Launcher/Feeder/Upper/PIDSetpoint", m_pidController.getSetpoint().position);
-        SmartDashboard.putNumber("Launcher/Feeder/Upper/PIDAcceleration", m_pidController.getSetpoint().velocity);
-        SmartDashboard.putNumber("Launcher/Feeder/Lower/AppliedVolts", m_motor2.getAppliedOutput() * m_motor2.getBusVoltage());
-        SmartDashboard.putNumber("Launcher/Feeder/Lower/AppliedCurrent", m_motor2.getOutputCurrent());
-        SmartDashboard.putBoolean("Launcher/Feeder/Lower/atSetpoint", atSetpoint2());
-        SmartDashboard.putNumber("Launcher/Feeder/Lower/PIDSetpoint", m_pidController2.getSetpoint().position);
-        SmartDashboard.putNumber("Launcher/Feeder/Lower/PIDAcceleration", m_pidController2.getSetpoint().velocity);
+        if (Constants.TUNING_MODE) {
+            // 2. TELEMETRY FOR ADVANTAGESCOPE
+            // Graph these two lines together to see how well you are tracking
+            SmartDashboard.putNumber("Launcher/Feeder/Main/SetpointRPM", m_targetRPM);
+            SmartDashboard.putNumber("Launcher/Feeder/Upper/ActualRPM", getVelocityGeared());
+            SmartDashboard.putNumber("Launcher/Feeder/Lower/ActualRPM", getVelocityGeared2());
+            
+            // Useful for seeing if you are maxing out your battery (12V)
+            SmartDashboard.putNumber("Launcher/Feeder/Upper/AppliedVolts", m_motor.getAppliedOutput() * m_motor.getBusVoltage());
+            SmartDashboard.putNumber("Launcher/Feeder/Upper/AppliedCurrent", m_motor.getOutputCurrent());
+            SmartDashboard.putBoolean("Launcher/Feeder/Upper/atSetpoint", atSetpoint());
+            SmartDashboard.putNumber("Launcher/Feeder/Upper/PIDSetpoint", m_pidController.getSetpoint().position);
+            SmartDashboard.putNumber("Launcher/Feeder/Upper/PIDAcceleration", m_pidController.getSetpoint().velocity);
+            SmartDashboard.putNumber("Launcher/Feeder/Lower/AppliedVolts", m_motor2.getAppliedOutput() * m_motor2.getBusVoltage());
+            SmartDashboard.putNumber("Launcher/Feeder/Lower/AppliedCurrent", m_motor2.getOutputCurrent());
+            SmartDashboard.putBoolean("Launcher/Feeder/Lower/atSetpoint", atSetpoint2());
+            SmartDashboard.putNumber("Launcher/Feeder/Lower/PIDSetpoint", m_pidController2.getSetpoint().position);
+            SmartDashboard.putNumber("Launcher/Feeder/Lower/PIDAcceleration", m_pidController2.getSetpoint().velocity);
+        }
     }
 
     public boolean atSetpoint() {

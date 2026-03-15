@@ -34,9 +34,11 @@ public class Arm extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     angle = encoder.getPosition();
-    SmartDashboard.putNumber("Arm/Rotator/EncoderPosition", angle);
-    SmartDashboard.putNumber("Arm/Rotator/EncoderVelocity", encoder.getVelocity());
-    SmartDashboard.putNumber("Arm/Rotator/AppliedCurrent", motor.getOutputCurrent());
+    if (Constants.TUNING_MODE) {
+      SmartDashboard.putNumber("Arm/Rotator/EncoderPosition", angle);
+      SmartDashboard.putNumber("Arm/Rotator/EncoderVelocity", encoder.getVelocity());
+      SmartDashboard.putNumber("Arm/Rotator/AppliedCurrent", motor.getOutputCurrent());
+    }
   }
 
   public void throwArm() {
