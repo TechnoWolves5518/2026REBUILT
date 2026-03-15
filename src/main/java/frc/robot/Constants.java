@@ -96,9 +96,11 @@ public final class Constants
       public static final double maxAcceleration = 70;
       public static final double minAngle = 2;
       public static final double maxAngle = 50;
-      public static final double defaultSetpoint = 35;
+      public static final double autoSetpoint = 20;
+      public static final double teleopSetpoint = 35;
+      public static final double defaultSetpoint = 20;
 
-      public static final double launcherKnownGoodAngle = 35;
+      public static final double launcherKnownGoodAngle = 20;
       public static final double launcherKnownGoodDistance = Units.inchesToMeters(73);
       public static final double launcherAngleSlope = 0;
     }
