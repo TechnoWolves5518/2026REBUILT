@@ -76,21 +76,6 @@ public class ArmFlywheel extends SubsystemBase {
     // Runs every 20ms
     @Override
     public void periodic() {
-        // 1. LIVE PID TUNING
-        // Read values from Dashboard. If they differ from current config, update them.
-        double p = SmartDashboard.getNumber("Arm/Flywheel/kP", 0);
-        double i = SmartDashboard.getNumber("Arm/Flywheel/kI", 0);
-        double d = SmartDashboard.getNumber("Arm/Flywheel/kD", 0);
-        double s = SmartDashboard.getNumber("Arm/Flywheel/kS", 0);
-        double v = SmartDashboard.getNumber("Arm/Flywheel/kV", 0);
-        double a = SmartDashboard.getNumber("Arm/Flywheel/kA", 0);
-        // Only update if changed (optimization)
-        if (p != m_pidController.getP()) m_pidController.setP(p);
-        if (i != m_pidController.getI()) m_pidController.setI(i);
-        if (d != m_pidController.getD()) m_pidController.setD(d);
-        if (s != m_feedforward.getKs()) m_feedforward.setKs(s);
-        if (v != m_feedforward.getKv()) m_feedforward.setKv(v);
-        if (a != m_feedforward.getKa()) m_feedforward.setKa(a);
 
 
         // 2. TELEMETRY FOR ADVANTAGESCOPE

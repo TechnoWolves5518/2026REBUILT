@@ -36,11 +36,9 @@ public class LauncherRotate extends SubsystemBase {
     SmartDashboard.putNumber("Launcher/Arm/kS", LauncherConstants.RotatorConstants.kS);
     SmartDashboard.putNumber("Launcher/Arm/kV", LauncherConstants.RotatorConstants.kV);
     SmartDashboard.putNumber("Launcher/Arm/kA", LauncherConstants.RotatorConstants.kA);
+    SmartDashboard.putBoolean("Launcher/Arm/systemRun", true);
     SmartDashboard.putNumber("Launcher/Arm/Voltage", 0);
     SmartDashboard.putNumber("Launcher/Arm/Current", 0);
-    SmartDashboard.putNumber("Launcher/Arm/Angle", LauncherConstants.RotatorConstants.defaultSetpoint);
-    SmartDashboard.putBoolean("Launcher/Arm/systemRun", true);
-    SmartDashboard.putBoolean("Launcher/Arm/systemStop", false);
 
     this.setpoint = LauncherConstants.RotatorConstants.defaultSetpoint;
     this.feedforward = new SimpleMotorFeedforward(
@@ -71,27 +69,11 @@ public class LauncherRotate extends SubsystemBase {
     SmartDashboard.putNumber("Launcher/Arm/EncoderVelocity", encoder.getVelocity());
     SmartDashboard.putNumber("Launcher/Arm/AppliedVoltage", motor.getAppliedOutput() * motor.getBusVoltage());
     SmartDashboard.putNumber("Launcher/Arm/AppliedCurrent", motor.getOutputCurrent());
-
-    
-    double kP = SmartDashboard.getNumber("Launcher/Arm/kP", LauncherConstants.RotatorConstants.kP);
-    double kI = SmartDashboard.getNumber("Launcher/Arm/kI", LauncherConstants.RotatorConstants.kI);
-    double kD = SmartDashboard.getNumber("Launcher/Arm/kD", LauncherConstants.RotatorConstants.kD);
-    double kS = SmartDashboard.getNumber("Launcher/Arm/kS", LauncherConstants.RotatorConstants.kS);
-    double kV = SmartDashboard.getNumber("Launcher/Arm/kV", LauncherConstants.RotatorConstants.kV);
-    double kA = SmartDashboard.getNumber("Launcher/Arm/kA", LauncherConstants.RotatorConstants.kA);
-
-    if (kP != pidController.getP()) pidController.setP(kP);
-    if (kI != pidController.getI()) pidController.setI(kI);
-    if (kD != pidController.getD()) pidController.setD(kD);
-
-    if (kS != feedforward.getKs()) feedforward.setKs(kS);
-    if (kV != feedforward.getKv()) feedforward.setKv(kV);
-    if (kA != feedforward.getKa()) feedforward.setKa(kA);
   }
 
   public void autoRun() {
     if (SmartDashboard.getBoolean("Launcher/Arm/systemRun", true)) {
-      double targetAngle = SmartDashboard.getNumber("Launcher/Arm/Angle", 0);
+      double targetAngle = LauncherConstants.RotatorConstants.defaultSetpoint;
       setAngle(targetAngle);
     } else {
       stop();

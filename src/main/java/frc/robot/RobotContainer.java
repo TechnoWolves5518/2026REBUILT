@@ -125,10 +125,6 @@ public class RobotContainer
    */
   public RobotContainer()
   {
-    // Initialize photon vision class in swerve subsystem
-    drivebase.setupPhotonVision();
-    // Initialize path planner class in swerve subsystem
-    drivebase.setupPathPlanner();
     // Configure the trigger bindings
     if (Constants.hasFlywheel) {
       flywheel = new Flywheel();
@@ -155,6 +151,7 @@ public class RobotContainer
     
     //Put the autoChooser on the SmartDashboard
     SmartDashboard.putData("Auto Chooser", autoChooser);
+    SmartDashboard.putData("Field", field);
   }
 
   /**
@@ -168,12 +165,6 @@ public class RobotContainer
   public void PublishSystemData() {
     // Add robot pose to Field2D and send data to DriverStation
     field.setRobotPose(drivebase.getPose());
-    SmartDashboard.putData("Field", field);
-    // Add PDP current data for flywheel to DriverStation
-    SmartDashboard.putNumber("System/Flywheel/Current", pdp.getCurrent(1));
-    // Add system voltage and current to DriverStation
-    SmartDashboard.putNumber("System/Voltage", pdp.getVoltage());
-    SmartDashboard.putNumber("System/Current", pdp.getTotalCurrent());
   }
 
 

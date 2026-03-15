@@ -62,37 +62,12 @@ public class Flywheel extends SubsystemBase {
 
         // INITIALIZE TUNABLE VALUES
         // We put the starting values onto SmartDashboard so they appear immediately
-        SmartDashboard.putNumber("Launcher/Flywheel/kP", LauncherConstants.FlywheelConstants.kP);
-        SmartDashboard.putNumber("Launcher/Flywheel/kI", LauncherConstants.FlywheelConstants.kI);
-        SmartDashboard.putNumber("Launcher/Flywheel/kD", LauncherConstants.FlywheelConstants.kD);
-        SmartDashboard.putNumber("Launcher/Flywheel/kS", LauncherConstants.FlywheelConstants.kS);
-        SmartDashboard.putNumber("Launcher/Flywheel/kV", LauncherConstants.FlywheelConstants.kV);
-        SmartDashboard.putNumber("Launcher/Flywheel/kA", LauncherConstants.FlywheelConstants.kA);
-        SmartDashboard.putNumber("Launcher/Flywheel/Target", LauncherConstants.FlywheelConstants.kTargetRPM);
         SmartDashboard.putNumber("Launcher/Flywheel/Voltage", 0);
     }
 
     // Runs every 20ms
     @Override
     public void periodic() {
-        // 1. LIVE PID TUNING
-        // Read values from Dashboard. If they differ from current config, update them.
-        double p = SmartDashboard.getNumber("Launcher/Flywheel/kP", 0);
-        double i = SmartDashboard.getNumber("Launcher/Flywheel/kI", 0);
-        double d = SmartDashboard.getNumber("Launcher/Flywheel/kD", 0);
-        double s = SmartDashboard.getNumber("Launcher/Flywheel/kS", 0);
-        double v = SmartDashboard.getNumber("Launcher/Flywheel/kV", 0);
-        double a = SmartDashboard.getNumber("Launcher/Flywheel/kA", 0);
-
-        // Only update if changed (optimization)
-        if (p != m_pidController.getP()) m_pidController.setP(p);
-        if (i != m_pidController.getI()) m_pidController.setI(i);
-        if (d != m_pidController.getD()) m_pidController.setD(d);
-        if (s != m_feedforward.getKs()) m_feedforward.setKs(s);
-        if (v != m_feedforward.getKv()) m_feedforward.setKv(v);
-        if (a != m_feedforward.getKa()) m_feedforward.setKa(a);
-
-
         // 2. TELEMETRY FOR ADVANTAGESCOPE
         // Graph these two lines together to see how well you are tracking
         SmartDashboard.putNumber("Launcher/Flywheel/SetpointRPM", m_targetRPM);
@@ -160,7 +135,7 @@ public class Flywheel extends SubsystemBase {
 
     public Command runFlywheelCommandSD() {
             return this.runEnd(
-                () -> setTargetVelocity(SmartDashboard.getNumber("Launcher/Flywheel/Target", 0)),
+                () -> setTargetVelocity(LauncherConstants.FlywheelConstants.kTargetRPM),
                 this::stop
             );
         }

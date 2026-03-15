@@ -124,34 +124,6 @@ public class Feeder extends SubsystemBase {
     // Runs every 20ms
     @Override
     public void periodic() {
-        // 1. LIVE PID TUNING
-        // Read values from Dashboard. If they differ from current config, update them.
-        double p_upper = SmartDashboard.getNumber("Launcher/Feeder/Upper/kP", 0);
-        double i_upper = SmartDashboard.getNumber("Launcher/Feeder/Upper/kI", 0);
-        double d_upper = SmartDashboard.getNumber("Launcher/Feeder/Upper/kD", 0);
-        double s_upper = SmartDashboard.getNumber("Launcher/Feeder/Upper/kS", 0);
-        double v_upper = SmartDashboard.getNumber("Launcher/Feeder/Upper/kV", 0);
-        double a_upper = SmartDashboard.getNumber("Launcher/Feeder/Upper/kA", 0);
-        double p_lower = SmartDashboard.getNumber("Launcher/Feeder/Lower/kP", 0);
-        double i_lower = SmartDashboard.getNumber("Launcher/Feeder/Lower/kI", 0);
-        double d_lower = SmartDashboard.getNumber("Launcher/Feeder/Lower/kD", 0);
-        double s_lower = SmartDashboard.getNumber("Launcher/Feeder/Lower/kS", 0);
-        double v_lower = SmartDashboard.getNumber("Launcher/Feeder/Lower/kV", 0);
-        double a_lower = SmartDashboard.getNumber("Launcher/Feeder/Lower/kA", 0);
-
-        // Only update if changed (optimization)
-        if (p_upper != m_pidController.getP()) m_pidController.setP(p_upper);
-        if (i_upper != m_pidController.getI()) m_pidController.setI(i_upper);
-        if (d_upper != m_pidController.getD()) m_pidController.setD(d_upper);
-        if (s_upper != m_feedforward.getKs()) m_feedforward.setKs(s_upper);
-        if (v_upper != m_feedforward.getKv()) m_feedforward.setKv(v_upper);
-        if (a_upper != m_feedforward.getKa()) m_feedforward.setKa(a_upper);
-        if (p_lower != m_pidController2.getP()) m_pidController2.setP(p_lower);
-        if (i_lower != m_pidController2.getI()) m_pidController2.setI(i_lower);
-        if (d_lower != m_pidController2.getD()) m_pidController2.setD(d_lower);
-        if (s_lower != m_feedforward2.getKs()) m_feedforward2.setKs(s_lower);
-        if (v_lower != m_feedforward2.getKv()) m_feedforward2.setKv(v_lower);
-        if (a_lower != m_feedforward2.getKa()) m_feedforward2.setKa(a_lower);
 
 
         // 2. TELEMETRY FOR ADVANTAGESCOPE
