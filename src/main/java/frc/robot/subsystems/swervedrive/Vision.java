@@ -339,20 +339,20 @@ public class Vision
     /**
      * Left Camera
      */
-    LEFT_CAM("AprilCamFL",
+    LEFT_CAM("AprilCamRL",
              new Rotation3d(0, Units.degreesToRadians(10), Units.degreesToRadians(160)),
-             new Translation3d(Units.inchesToMeters((-13.75)+(4.61)),
-                               Units.inchesToMeters((13.75)-(2.185)),
-                               Units.inchesToMeters(10)),
+             new Translation3d(Units.inchesToMeters((-13.75)+(3.25)),
+                               Units.inchesToMeters((13.75)-(3.25)),
+                               Units.inchesToMeters(10.5)),
              VecBuilder.fill(4 * Constants.VisionSystem.cameraSTDmultiplier, 4 * Constants.VisionSystem.cameraSTDmultiplier, 8 * Constants.VisionSystem.cameraSTDmultiplier), VecBuilder.fill(0.5 * Constants.VisionSystem.cameraSTDmultiplier, 0.5 * Constants.VisionSystem.cameraSTDmultiplier, 1 * Constants.VisionSystem.cameraSTDmultiplier)),
     /**
      * Right Camera
      */
-    RIGHT_CAM("AprilCamFR",
+    RIGHT_CAM("AprilCamRR",
               new Rotation3d(0, Units.degreesToRadians(10), Units.degreesToRadians(200)),
-              new Translation3d(Units.inchesToMeters((-13.75)+(4.61)),
-                                Units.inchesToMeters((-13.75)+(2.185)),
-                                Units.inchesToMeters(10)),
+              new Translation3d(Units.inchesToMeters((-13.75)+(3.25)),
+                                Units.inchesToMeters((-13.75)+(3.25)),
+                                Units.inchesToMeters(10.5)),
               VecBuilder.fill(4 * Constants.VisionSystem.cameraSTDmultiplier, 4 * Constants.VisionSystem.cameraSTDmultiplier, 8 * Constants.VisionSystem.cameraSTDmultiplier), VecBuilder.fill(0.5 * Constants.VisionSystem.cameraSTDmultiplier, 0.5 * Constants.VisionSystem.cameraSTDmultiplier, 1 * Constants.VisionSystem.cameraSTDmultiplier));
 
     /**
