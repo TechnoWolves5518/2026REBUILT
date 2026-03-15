@@ -136,8 +136,8 @@ public class RobotContainer
     
     //Create the NamedCommands that will be used in PathPlanner
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
-    new EventTrigger("runFLywheel").whileTrue(flywheel.runFlywheelCommandSD());
-    new EventTrigger("runFeeder").whileTrue(feeder.runFeederSD());
+    new EventTrigger("runFLywheel").onTrue(flywheel.runFlywheelCommandSD());
+    new EventTrigger("runFeeder").onTrue(feeder.runFeederSD());
     new EventTrigger("throwArm").whileTrue(arm.runThrow());
 
     //Have the autoChooser pull in all PathPlanner autos as options
@@ -149,7 +149,7 @@ public class RobotContainer
     //Add a simple auto option to have the robot drive forward for 1 second then stop
     autoChooser.addOption("Drive Forward", drivebase.driveForward().withTimeout(1));
     
-    //Put the autoChooser on the SmartDashboard
+    //Put the autoChooser on the SmartDshboard
     SmartDashboard.putData("Auto Chooser", autoChooser);
     SmartDashboard.putData("Field", field);
   }

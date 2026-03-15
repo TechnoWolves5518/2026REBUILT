@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.5126215895610919,
-        "y": 4.911874258600237
+        "x": 0.769,
+        "y": 4.619
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.5716215895610919,
-        "y": 4.911874258600237
+        "x": 1.8279999999999998,
+        "y": 4.619
       },
       "isLocked": false,
       "linkedName": null
@@ -32,12 +32,12 @@
     },
     {
       "anchor": {
-        "x": 2.9992880794737458,
-        "y": 4.064039735096057
+        "x": 2.999,
+        "y": 4.064
       },
       "prevControl": {
-        "x": 2.3429772846932,
-        "y": 4.010243768310767
+        "x": 2.3426892052194543,
+        "y": 4.01020403321471
       },
       "nextControl": null,
       "isLocked": false,
@@ -65,7 +65,7 @@
     },
     {
       "name": "runFlywheel",
-      "waypointRelativePos": 0.0,
+      "waypointRelativePos": 1.0031595576619294,
       "endWaypointRelativePos": 2.0,
       "command": null
     },

@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.612,
-        "y": 4.021
+        "x": 2.3,
+        "y": 4.064
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.612,
-        "y": 4.021
+        "x": 2.55,
+        "y": 4.064
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 4.0,
-        "y": 6.0
+        "x": 2.999,
+        "y": 4.064
       },
       "prevControl": {
-        "x": 3.0,
-        "y": 6.0
+        "x": 2.749,
+        "y": 4.064
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,7 +31,26 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "throwArm",
+      "waypointRelativePos": 1.0,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "runFlywheel",
+      "waypointRelativePos": 1.0,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "runFeeder",
+      "waypointRelativePos": 1.0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
