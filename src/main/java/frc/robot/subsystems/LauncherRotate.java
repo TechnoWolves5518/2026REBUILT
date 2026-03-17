@@ -18,6 +18,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.revrobotics.sim.SparkMaxSim;
 import edu.wpi.first.math.system.plant.DCMotor;
 
+/**
+ * Subsystem for controlling the launcher's rotational arm.
+ * Uses a SparkMax motor with a relative encoder, SimpleMotorFeedforward, and
+ * ProfiledPIDController to achieve precise angles for aiming the launcher.
+ */
 public class LauncherRotate extends SubsystemBase {
   private double angle; // Current angle of the arm in degrees
   private double setpoint;
@@ -27,8 +32,8 @@ public class LauncherRotate extends SubsystemBase {
   @SuppressWarnings("unused")
   private SparkMaxSim motorSim;
   private RelativeEncoder encoder;
-  /** Creates a new LauncherRotate. */
 
+  /** Creates a new LauncherRotate subsystem. */
   public LauncherRotate() {
     SmartDashboard.putNumber("Launcher/Arm/kP", LauncherConstants.RotatorConstants.kP);
     SmartDashboard.putNumber("Launcher/Arm/kI", LauncherConstants.RotatorConstants.kI);
@@ -41,12 +46,16 @@ public class LauncherRotate extends SubsystemBase {
     SmartDashboard.putNumber("Launcher/Arm/Current", 0);
 
     this.setpoint = LauncherConstants.RotatorConstants.defaultSetpoint;
+    
+    // Initialize feedforward
     this.feedforward = new SimpleMotorFeedforward(
       LauncherConstants.RotatorConstants.kS,
       LauncherConstants.RotatorConstants.kV,
       LauncherConstants.RotatorConstants.kA
     );
     angle = 0.0; // Initialize the arm angle to 0 degrees
+    
+    // Initialize profiled PID controller
     this.pidController = new ProfiledPIDController(
       LauncherConstants.RotatorConstants.kP,
       LauncherConstants.RotatorConstants.kI,
@@ -64,13 +73,19 @@ public class LauncherRotate extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    angle = encoder.getPosition() * 360;
+    angle = encoder.getPosition() * 360; // Convert encoder position to degrees
+    
+    // Publish telemetry
     SmartDashboard.putNumber("Launcher/Arm/EncoderPosition", angle);
     SmartDashboard.putNumber("Launcher/Arm/EncoderVelocity", encoder.getVelocity());
     SmartDashboard.putNumber("Launcher/Arm/AppliedVoltage", motor.getAppliedOutput() * motor.getBusVoltage());
     SmartDashboard.putNumber("Launcher/Arm/AppliedCurrent", motor.getOutputCurrent());
   }
 
+  /**
+   * Automatically runs the rotation control to the current setpoint if enabled in SmartDashboard.
+   * Stops the motor if system run is disabled.
+   */
   public void autoRun() {
     if (SmartDashboard.getBoolean("Launcher/Arm/systemRun", true)) {
       double targetAngle = setpoint;
@@ -80,46 +95,65 @@ public class LauncherRotate extends SubsystemBase {
     }
   }
 
+  /** Returns a command that continually executes autoRun(). */
   public Command autoCommand() {
     return this.run(() -> autoRun());
   }
   
+  /**
+   * Sets the launcher arm to the target angle, respecting minimum angle bounds.
+   * Computes the combined PID and feedforward output.
+   * @param targetAngle The desired angle in degrees.
+   */
   public void setAngle(double targetAngle) {
     // Ensure the target angle is within the safe range
     targetAngle = Math.max(targetAngle, LauncherConstants.RotatorConstants.minAngle);
+    
+    // Calculate PID output
     double pid = pidController.calculate(angle, targetAngle);
     SmartDashboard.putNumber("Launcher/Arm/PID/PIDOutput", pid);
+    
+    // Calculate feedforward using the current encoder velocity and profile setpoint velocity
     double ff = feedforward.calculateWithVelocities(encoder.getVelocity(), pidController.getSetpoint().velocity);
     SmartDashboard.putNumber("Launcher/Arm/PID/FeedforwardOutput", ff);
     SmartDashboard.putNumber("Launcher/Arm/PID/TotalOutput", pid + ff);
+    
+    // Apply voltage to the motor
     motor.setVoltage(pid + ff);
   }
 
+  /** Directly sets the motor voltage. */
   public void setVoltage(double targetVoltage) {
     motor.setVoltage(targetVoltage);
   }
 
+  /** Stops the rotation motor and resets the PID controller based on current angle. */
   public void stop() {
     motor.stopMotor();
     pidController.reset(angle);
   }
 
+  /** Resets the relative encoder position to zero. */
   public void resetEncoder() {
     encoder.setPosition(0);
   }
   
+  /** Returns a command that continuously tries to maintain a given angle. */
   public Command runAngle(double Angle) {
     return this.run(() -> setAngle(Angle));
   }
 
+  /** Returns a command that applies a constant voltage. */
   public Command runVoltage(double Voltage) {
     return this.run(() -> setVoltage(Voltage));
   }
   
+  /** Returns a one-shot command to reset the encoder position. */
   public Command EncoderResetCommand() {
     return this.runOnce(() -> resetEncoder());
   }
 
+  /** Returns a command that continuously stops the launcher arm. */
   public Command stopCommand() {
     return this.run(this::stop);
   }

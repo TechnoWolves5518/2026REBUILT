@@ -19,6 +19,11 @@ import frc.robot.Constants.IntakeConstants;
 import com.revrobotics.sim.SparkMaxSim;
 import edu.wpi.first.math.system.plant.DCMotor;
 
+/**
+ * Subsystem for controlling the arm's flywheel.
+ * It uses a single SparkMax motor with a relative encoder, governed by a ProfiledPIDController
+ * and a SimpleMotorFeedforward to maintain accurate target RPMs.
+ */
 public class ArmFlywheel extends SubsystemBase {
     private final SparkMax m_motor;
     @SuppressWarnings("unused")
@@ -31,6 +36,7 @@ public class ArmFlywheel extends SubsystemBase {
     private double m_targetRPM = 0.0;
     private boolean m_running = false;
 
+    /** Creates a new ArmFlywheel subsystem. */
     public ArmFlywheel() {
         m_motor = new SparkMax(IntakeConstants.FlywheelConstants.kMotorID, MotorType.kBrushless);
         
@@ -43,12 +49,14 @@ public class ArmFlywheel extends SubsystemBase {
 
         m_encoder = m_motor.getEncoder();
 
+        // Initialize feedforward for predictive voltage calculation
         m_feedforward = new SimpleMotorFeedforward(
             IntakeConstants.FlywheelConstants.kS,
             IntakeConstants.FlywheelConstants.kV,
             IntakeConstants.FlywheelConstants.kA
         );
 
+        // Initialize profiled PID controller for smooth acceleration/deceleration
         m_pidController = new ProfiledPIDController(
             IntakeConstants.FlywheelConstants.kP,
             IntakeConstants.FlywheelConstants.kI,
@@ -75,8 +83,6 @@ public class ArmFlywheel extends SubsystemBase {
     // Runs every 20ms
     @Override
     public void periodic() {
-
-
         // 2. TELEMETRY FOR ADVANTAGESCOPE
         // Graph these two lines together to see how well you are tracking
         SmartDashboard.putNumber("Arm/Flywheel/SetpointRPM", m_targetRPM);
@@ -90,6 +96,10 @@ public class ArmFlywheel extends SubsystemBase {
         SmartDashboard.putNumber("Arm/Flywheel/PIDAcceleration", m_pidController.getSetpoint().velocity);
     }
 
+    /** 
+     * Checks if the flywheel is currently running and at the target RPM within a 100 RPM tolerance.
+     * @return true if at setpoint, false otherwise.
+     */
     public boolean atSetpoint() {
         double currentVelocity = m_encoder.getVelocity();
         double targetVelocity = m_targetRPM;
@@ -106,6 +116,11 @@ public class ArmFlywheel extends SubsystemBase {
         }
     }
 
+    /**
+     * Sets the target velocity for the flywheel in RPM.
+     * Combines PID calculation with feedforward based on the trapezoidal profile setpoint.
+     * @param targetRPM The desired flywheel speed in RPM.
+     */
     public void setTargetVelocity(double targetRPM) {
         // If this is the start of the command/ reset the PID controller to start at the current speed.
         if (m_running == false) {
@@ -115,19 +130,22 @@ public class ArmFlywheel extends SubsystemBase {
 
         m_targetRPM = targetRPM; // Save for logging
         
+        // Calculate PID output based on current geared velocity and target
         double pidOutput = m_pidController.calculate((m_encoder.getVelocity() * IntakeConstants.FlywheelConstants.kGearRatio), targetRPM);
 
-        // Use the setpoint from the profile (position is RPM, velocity is RPM/s acceleration)
+        // Use the setpoint from the profile (position is RPM, velocity is RPM/s acceleration) to calculate feedforward
         TrapezoidProfile.State setpoint = m_pidController.getSetpoint();
         double ffOutput = m_feedforward.calculateWithVelocities(m_encoder.getVelocity(), setpoint.position);
 
         m_motor.setVoltage(ffOutput + pidOutput);
     }
 
+    /** Sets the motor to a direct voltage read from SmartDashboard for testing. */
     public void setTargetVoltage() {
         m_motor.setVoltage(SmartDashboard.getNumber("Arm/Flywheel/Voltage", 0));
     }
 
+    /** Stops the flywheel and resets state. */
     public void stop() {
         m_running = false;
         m_motor.stopMotor();
@@ -135,6 +153,11 @@ public class ArmFlywheel extends SubsystemBase {
         m_targetRPM = 0.0;
     }
 
+    /**
+     * Returns a command that runs the flywheel to a specified RPM and stops it when ended.
+     * @param targetRPM The desired target RPM.
+     * @return Command for running the flywheel.
+     */
     public Command runFlywheelCommand(double targetRPM) {
         return this.runEnd(
             () -> setTargetVelocity(targetRPM),
@@ -142,6 +165,7 @@ public class ArmFlywheel extends SubsystemBase {
         );
     }
 
+    /** Returns a command that runs the flywheel using the target RPM from SmartDashboard. */
     public Command runFlywheelCommandSD() {
             return this.runEnd(
                 () -> setTargetVelocity(-SmartDashboard.getNumber("Arm/Flywheel/Target", 0)),
@@ -149,6 +173,7 @@ public class ArmFlywheel extends SubsystemBase {
             );
         }
 
+    /** Returns a command that runs the flywheel using direct voltage control from SmartDashboard. */
     public Command runFlywheelVoltage() {
         return this.runEnd(this::setTargetVoltage, this::stop);
     }

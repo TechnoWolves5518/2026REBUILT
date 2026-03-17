@@ -19,6 +19,11 @@ import frc.robot.Constants.LauncherConstants.FeederConstants;
 import com.revrobotics.sim.SparkMaxSim;
 import edu.wpi.first.math.system.plant.DCMotor;
 
+/**
+ * Subsystem for controlling the Feeder, consisting of an upper and lower motor.
+ * Each motor is controlled independently with its own relative encoder,
+ * SimpleMotorFeedforward, and ProfiledPIDController to track target RPMs.
+ */
 public class Feeder extends SubsystemBase {
     private final SparkMax m_motor;
     private final SparkMax m_motor2;
@@ -33,13 +38,11 @@ public class Feeder extends SubsystemBase {
     private final ProfiledPIDController m_pidController;
     private final ProfiledPIDController m_pidController2;
 
-    
-
-
     // We store the target RPM here so we can log it in periodic()
     private double m_targetRPM = 0.0;
     private boolean m_running = false;
 
+    /** Creates a new Feeder subsystem. */
     public Feeder() {
         m_motor = new SparkMax(FeederConstants.Upper.kMotorID, MotorType.kBrushless);
         m_motor2 = new SparkMax(FeederConstants.Lower.kMotorID, MotorType.kBrushless);
@@ -60,6 +63,7 @@ public class Feeder extends SubsystemBase {
         m_encoder = m_motor.getEncoder();
         m_encoder2 = m_motor2.getEncoder();
 
+        // Feedforwards for upper and lower motors
         m_feedforward = new SimpleMotorFeedforward(
             FeederConstants.Upper.kS,
             FeederConstants.Upper.kV,
@@ -71,7 +75,7 @@ public class Feeder extends SubsystemBase {
             FeederConstants.Lower.kA
         );
 
-
+        // Profiled PID Controllers for upper and lower motors
         m_pidController = new ProfiledPIDController(
             FeederConstants.Upper.kP,
             FeederConstants.Upper.kI,
@@ -112,10 +116,12 @@ public class Feeder extends SubsystemBase {
         SmartDashboard.putNumber("Launcher/Feeder/Main/Target", 4000);
     }
 
+    /** Retrieves the geared velocity of the upper motor. */
     double getVelocityGeared() {
         return m_encoder.getVelocity();
     }
 
+    /** Retrieves the geared velocity of the lower motor. */
     double getVelocityGeared2() {
         return m_encoder2.getVelocity();
     }
@@ -123,8 +129,6 @@ public class Feeder extends SubsystemBase {
     // Runs every 20ms
     @Override
     public void periodic() {
-
-
         // 2. TELEMETRY FOR ADVANTAGESCOPE
         // Graph these two lines together to see how well you are tracking
         SmartDashboard.putNumber("Launcher/Feeder/Main/SetpointRPM", m_targetRPM);
@@ -137,6 +141,7 @@ public class Feeder extends SubsystemBase {
         SmartDashboard.putBoolean("Launcher/Feeder/Upper/atSetpoint", atSetpoint());
         SmartDashboard.putNumber("Launcher/Feeder/Upper/PIDSetpoint", m_pidController.getSetpoint().position);
         SmartDashboard.putNumber("Launcher/Feeder/Upper/PIDAcceleration", m_pidController.getSetpoint().velocity);
+        
         SmartDashboard.putNumber("Launcher/Feeder/Lower/AppliedVolts", m_motor2.getAppliedOutput() * m_motor2.getBusVoltage());
         SmartDashboard.putNumber("Launcher/Feeder/Lower/AppliedCurrent", m_motor2.getOutputCurrent());
         SmartDashboard.putBoolean("Launcher/Feeder/Lower/atSetpoint", atSetpoint2());
@@ -144,6 +149,7 @@ public class Feeder extends SubsystemBase {
         SmartDashboard.putNumber("Launcher/Feeder/Lower/PIDAcceleration", m_pidController2.getSetpoint().velocity);
     }
 
+    /** Checks if the upper motor is within 100 RPM of the target velocity. */
     public boolean atSetpoint() {
         double currentVelocity = getVelocityGeared();
         double targetVelocity = m_targetRPM;
@@ -159,6 +165,8 @@ public class Feeder extends SubsystemBase {
             return false;
         }
     }
+
+    /** Checks if the lower motor is within 100 RPM of the target velocity. */
     public boolean atSetpoint2() {
         double currentVelocity = getVelocityGeared2();
         double targetVelocity = m_targetRPM;
@@ -175,6 +183,11 @@ public class Feeder extends SubsystemBase {
         }
     }
 
+    /**
+     * Sets the target velocity for both upper and lower motors in RPM.
+     * Computes PID and feedforward outputs for each and applies the respective voltages.
+     * @param targetRPM The desired speed for both feeder motors.
+     */
     public void setTargetVelocity(double targetRPM) {
         // If this is the start of the command/ reset the PID controller to start at the current speed.
         if (m_running == false) {
@@ -185,27 +198,28 @@ public class Feeder extends SubsystemBase {
 
         m_targetRPM = targetRPM; // Save for logging
         
+        // Calculate PID output for each motor
         double pidOutput = m_pidController.calculate(getVelocityGeared(), targetRPM);
         double pidOutput2 = m_pidController2.calculate(getVelocityGeared2(), targetRPM);
 
-
-        // Use the setpoint from the profile (position is RPM, velocity is RPM/s acceleration)
+        // Use the setpoint from the profile (position is RPM, velocity is RPM/s acceleration) to calculate feedforward
         TrapezoidProfile.State setpoint = m_pidController.getSetpoint();
         double ffOutput = m_feedforward.calculateWithVelocities(m_encoder.getVelocity(), setpoint.position);
+        
         TrapezoidProfile.State setpoint2 = m_pidController2.getSetpoint();
         double ffOutput2 = m_feedforward2.calculateWithVelocities(m_encoder2.getVelocity(), setpoint2.position);
-
 
         m_motor.setVoltage(ffOutput + pidOutput);
         m_motor2.setVoltage(ffOutput2 + pidOutput2);
     }
 
+    /** Sets both motors to a direct voltage read from SmartDashboard for testing. */
     public void setTargetVoltage() {
         m_motor.setVoltage(SmartDashboard.getNumber("Launcher/Feeder/Upper/Voltage", 0));
         m_motor2.setVoltage(SmartDashboard.getNumber("Launcher/Feeder/Lower/Voltage", 0));
     }
 
-
+    /** Stops both motors and resets PID state. */
     public void stop() {
         m_running = false;
         m_motor.stopMotor();
@@ -215,6 +229,11 @@ public class Feeder extends SubsystemBase {
         m_targetRPM = 0.0;
     }
 
+    /** 
+     * Returns a command that sets the feeder to the specified target RPM.
+     * @param targetRPM Target speed in RPM.
+     * @return Command for running the feeder.
+     */
     public Command runFeeder(double targetRPM) {
         return this.runEnd(
             () -> setTargetVelocity(targetRPM),
@@ -222,6 +241,7 @@ public class Feeder extends SubsystemBase {
         );
     }
 
+    /** Returns a command that runs the feeder using the target RPM from SmartDashboard. */
     public Command runFeederSD() {
             return this.runEnd(
                 () -> setTargetVelocity(SmartDashboard.getNumber("Launcher/Feeder/Main/Target", 4000)),
@@ -229,6 +249,7 @@ public class Feeder extends SubsystemBase {
             );
         }
 
+    /** Returns a command that runs the feeder using direct voltage control from SmartDashboard. */
     public Command runFeederVoltage() {
         return this.runEnd(this::setTargetVoltage, this::stop);
     }
