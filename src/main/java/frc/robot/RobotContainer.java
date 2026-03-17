@@ -136,6 +136,7 @@ public class RobotContainer
     
     //Create the NamedCommands that will be used in PathPlanner
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
+    NamedCommands.registerCommand("spinUpAndFeed", spinUpAndFeedCommand());
     new EventTrigger("runFlywheel").onTrue(flywheel.runFlywheelCommandSD());
     new EventTrigger("runFeeder").onTrue(feeder.runFeederSD());
     new EventTrigger("throwArm").whileTrue(arm.runThrow());
@@ -145,9 +146,6 @@ public class RobotContainer
 
     //Set the default auto (do nothing) 
     autoChooser.setDefaultOption("Do Nothing", Commands.none());
-
-    //Add a simple auto option to have the robot drive forward for 1 second then stop
-    autoChooser.addOption("Drive Forward", drivebase.driveForward().withTimeout(1));
     
     //Put the autoChooser on the SmartDshboard
     SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -234,13 +232,8 @@ public class RobotContainer
       driverXbox.back().whileTrue(Commands.none());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.rightTrigger().whileTrue(drivebase.autoPointWhileDriving(() -> driverXbox.getLeftY() * -1, () -> driverXbox.getLeftX() * -1, launcherRotate::setAngle));
-      if (Constants.hasFlywheel) {
-        schmoXbox.rightBumper().whileTrue(flywheel.runFlywheelCommandSD());
-      } else {
-        DriverStation.reportError("[TW_CODEBASE] Critical launcher component not installed (source: flywheel)", true);
-      }
       schmoXbox.leftTrigger().whileTrue(armFlywheel.runFlywheelCommandSD());
-      schmoXbox.rightTrigger().whileTrue(feeder.runFeederSD());
+      schmoXbox.rightTrigger().whileTrue(spinUpAndFeedCommand());
       schmoXbox.a().whileTrue(arm.runThrow());
       schmoXbox.y().whileTrue(arm.runLift());
       schmoXbox.b().whileTrue(armFlywheel.runFlywheelVoltage());
@@ -262,5 +255,23 @@ public class RobotContainer
   public void setMotorBrake(boolean brake)
   {
     drivebase.setMotorBrake(brake);
+  }
+
+  /**
+   * Command that spins up the flywheel, waits for it to reach setpoint,
+   * then turns on the feeder. Both are stopped if the command is interrupted.
+   */
+  public Command spinUpAndFeedCommand() {
+    if (flywheel == null) {
+      return Commands.none();
+    }
+    
+    return Commands.parallel(
+        flywheel.runFlywheelCommandSD(),
+        Commands.sequence(
+            Commands.waitUntil(flywheel::atSetpoint),
+            feeder.runFeederSD()
+        )
+    );
   }
 }
