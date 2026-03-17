@@ -13,6 +13,8 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.ResetMode;
+import com.revrobotics.PersistMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -67,14 +69,14 @@ public class Arm extends SubsystemBase {
   private void setBrakeMode() {
     SparkMaxConfig config = new SparkMaxConfig();
     config.idleMode(SparkMaxConfig.IdleMode.kBrake);
-    motor.configure(config, SparkMax.ResetMode.kNoResetSafeParameters, SparkMax.PersistMode.kNoPersistParameters);
+    motor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 
   /** Configures the motor's idle mode to Coast. */
   private void setCoastMode() {
     SparkMaxConfig config = new SparkMaxConfig();
     config.idleMode(SparkMaxConfig.IdleMode.kCoast);
-    motor.configure(config, SparkMax.ResetMode.kNoResetSafeParameters, SparkMax.PersistMode.kNoPersistParameters);
+    motor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }
   
   /** Returns a command that runs the throw action and stops when interrupted. */

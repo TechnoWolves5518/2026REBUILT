@@ -13,6 +13,8 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.ResetMode;
+import com.revrobotics.PersistMode;
 
 import frc.robot.Constants.IntakeConstants;
 
@@ -44,7 +46,7 @@ public class ArmFlywheel extends SubsystemBase {
         config.smartCurrentLimit(IntakeConstants.FlywheelConstants.kCurrentLimit);
         config.idleMode(IdleMode.kCoast);
         
-        m_motor.configure(config, SparkMax.ResetMode.kResetSafeParameters, SparkMax.PersistMode.kPersistParameters);
+        m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         m_motorSim = new SparkMaxSim(m_motor, DCMotor.getNEO(1));
 
         m_encoder = m_motor.getEncoder();

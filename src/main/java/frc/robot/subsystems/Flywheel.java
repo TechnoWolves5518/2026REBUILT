@@ -13,6 +13,8 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.ResetMode;
+import com.revrobotics.PersistMode;
 
 import frc.robot.Constants.LauncherConstants;
 
@@ -44,7 +46,7 @@ public class Flywheel extends SubsystemBase {
         SparkMaxConfig config = new SparkMaxConfig();
         config.smartCurrentLimit(LauncherConstants.FlywheelConstants.kCurrentLimit);
         config.idleMode(IdleMode.kCoast);
-        m_motor.configure(config, SparkMax.ResetMode.kResetSafeParameters, SparkMax.PersistMode.kPersistParameters);
+        m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         m_encoder = m_motor.getEncoder();
 

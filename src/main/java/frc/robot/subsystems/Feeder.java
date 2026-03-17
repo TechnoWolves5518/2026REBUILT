@@ -13,6 +13,8 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.ResetMode;
+import com.revrobotics.PersistMode;
 
 import frc.robot.Constants.LauncherConstants.FeederConstants;
 
@@ -53,12 +55,12 @@ public class Feeder extends SubsystemBase {
         config.smartCurrentLimit(FeederConstants.Upper.kCurrentLimit);
         config.idleMode(IdleMode.kCoast);
         config.inverted(true);
-        m_motor.configure(config, SparkMax.ResetMode.kResetSafeParameters, SparkMax.PersistMode.kPersistParameters);
+        m_motor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         SparkMaxConfig config2 = new SparkMaxConfig();
         config2.smartCurrentLimit(FeederConstants.Lower.kCurrentLimit);
         config2.idleMode(IdleMode.kCoast);
-        m_motor2.configure(config2, SparkMax.ResetMode.kResetSafeParameters, SparkMax.PersistMode.kPersistParameters);
+        m_motor2.configure(config2, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         m_encoder = m_motor.getEncoder();
         m_encoder2 = m_motor2.getEncoder();
