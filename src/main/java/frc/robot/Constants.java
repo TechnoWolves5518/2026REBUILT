@@ -62,7 +62,7 @@ public final class Constants
   }
 
   public static class VisionSystem {
-      public static final double cameraSTDmultiplier = 4;
+      public static final double cameraSTDmultiplier = 1;
   }
 
   public static class OperatorConstants
