@@ -17,6 +17,7 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.PersistMode;
 
 import frc.robot.Constants.LauncherConstants;
+import frc.robot.Constants;
 
 import com.revrobotics.sim.SparkMaxSim;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -79,15 +80,19 @@ public class Flywheel extends SubsystemBase {
     public void periodic() {
         // 2. TELEMETRY FOR ADVANTAGESCOPE
         // Graph these two lines together to see how well you are tracking
-        SmartDashboard.putNumber("Launcher/Flywheel/SetpointRPM", m_targetRPM);
-        SmartDashboard.putNumber("Launcher/Flywheel/ActualRPM", m_encoder.getVelocity());
-        
+        if (Constants.verbose) {
+            SmartDashboard.putNumber("Launcher/Flywheel/SetpointRPM", m_targetRPM);
+            SmartDashboard.putNumber("Launcher/Flywheel/ActualRPM", m_encoder.getVelocity());
+        }
+
         // Useful for seeing if you are maxing out your battery (12V)
-        SmartDashboard.putNumber("Launcher/Flywheel/AppliedVolts", m_motor.getAppliedOutput() * m_motor.getBusVoltage());
-        SmartDashboard.putNumber("Launcher/Flywheel/AppliedCurrent", m_motor.getOutputCurrent());
-        SmartDashboard.putBoolean("Launcher/Flywheel/atSetpoint", atSetpoint());
-        SmartDashboard.putNumber("Launcher/Flywheel/PIDSetpoint", m_pidController.getSetpoint().position);
-        SmartDashboard.putNumber("Launcher/Flywheel/PIDAcceleration", m_pidController.getSetpoint().velocity);
+        if (Constants.verbose) {
+            SmartDashboard.putNumber("Launcher/Flywheel/AppliedVolts", m_motor.getAppliedOutput() * m_motor.getBusVoltage());
+            SmartDashboard.putNumber("Launcher/Flywheel/AppliedCurrent", m_motor.getOutputCurrent());
+            SmartDashboard.putBoolean("Launcher/Flywheel/atSetpoint", atSetpoint());
+            SmartDashboard.putNumber("Launcher/Flywheel/PIDSetpoint", m_pidController.getSetpoint().position);
+            SmartDashboard.putNumber("Launcher/Flywheel/PIDAcceleration", m_pidController.getSetpoint().velocity);
+        }
     }
 
     /** 

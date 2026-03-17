@@ -14,6 +14,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 
 import com.revrobotics.sim.SparkMaxSim;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -32,18 +33,10 @@ public class LauncherRotate extends SubsystemBase {
   @SuppressWarnings("unused")
   private SparkMaxSim motorSim;
   private RelativeEncoder encoder;
+  private boolean systemRun = true;
 
   /** Creates a new LauncherRotate subsystem. */
   public LauncherRotate() {
-    SmartDashboard.putNumber("Launcher/Arm/kP", LauncherConstants.RotatorConstants.kP);
-    SmartDashboard.putNumber("Launcher/Arm/kI", LauncherConstants.RotatorConstants.kI);
-    SmartDashboard.putNumber("Launcher/Arm/kD", LauncherConstants.RotatorConstants.kD);
-    SmartDashboard.putNumber("Launcher/Arm/kS", LauncherConstants.RotatorConstants.kS);
-    SmartDashboard.putNumber("Launcher/Arm/kV", LauncherConstants.RotatorConstants.kV);
-    SmartDashboard.putNumber("Launcher/Arm/kA", LauncherConstants.RotatorConstants.kA);
-    SmartDashboard.putBoolean("Launcher/Arm/systemRun", true);
-    SmartDashboard.putNumber("Launcher/Arm/Voltage", 0);
-    SmartDashboard.putNumber("Launcher/Arm/Current", 0);
 
     this.setpoint = LauncherConstants.RotatorConstants.defaultSetpoint;
     
@@ -76,10 +69,12 @@ public class LauncherRotate extends SubsystemBase {
     angle = encoder.getPosition() * 360; // Convert encoder position to degrees
     
     // Publish telemetry
-    SmartDashboard.putNumber("Launcher/Arm/EncoderPosition", angle);
-    SmartDashboard.putNumber("Launcher/Arm/EncoderVelocity", encoder.getVelocity());
-    SmartDashboard.putNumber("Launcher/Arm/AppliedVoltage", motor.getAppliedOutput() * motor.getBusVoltage());
-    SmartDashboard.putNumber("Launcher/Arm/AppliedCurrent", motor.getOutputCurrent());
+    if (Constants.verbose) {
+      SmartDashboard.putNumber("Launcher/Arm/EncoderPosition", angle);
+      SmartDashboard.putNumber("Launcher/Arm/EncoderVelocity", encoder.getVelocity());
+      SmartDashboard.putNumber("Launcher/Arm/AppliedVoltage", motor.getAppliedOutput() * motor.getBusVoltage());
+      SmartDashboard.putNumber("Launcher/Arm/AppliedCurrent", motor.getOutputCurrent());
+    }
   }
 
   /**
@@ -87,7 +82,7 @@ public class LauncherRotate extends SubsystemBase {
    * Stops the motor if system run is disabled.
    */
   public void autoRun() {
-    if (SmartDashboard.getBoolean("Launcher/Arm/systemRun", true)) {
+    if (systemRun) {
       double targetAngle = setpoint;
       setAngle(targetAngle);
     } else {

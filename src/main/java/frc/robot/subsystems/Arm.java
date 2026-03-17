@@ -43,9 +43,12 @@ public class Arm extends SubsystemBase {
     angle = encoder.getPosition();
     
     // Publish telemetry to SmartDashboard
-    SmartDashboard.putNumber("Arm/Rotator/EncoderPosition", angle);
-    SmartDashboard.putNumber("Arm/Rotator/EncoderVelocity", encoder.getVelocity());
-    SmartDashboard.putNumber("Arm/Rotator/AppliedCurrent", motor.getOutputCurrent());
+    if (Constants.verbose) {
+      SmartDashboard.putNumber("Arm/Rotator/EncoderPosition", angle);
+      SmartDashboard.putNumber("Arm/Rotator/EncoderVelocity", encoder.getVelocity());
+      SmartDashboard.putNumber("Arm/Rotator/AppliedCurrent", motor.getOutputCurrent());
+    }
+
   }
 
   /** Applies a positive voltage to throw/lower the arm and sets it to coast mode. */

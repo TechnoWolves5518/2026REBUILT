@@ -17,6 +17,7 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.PersistMode;
 
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants;
 
 import com.revrobotics.sim.SparkMaxSim;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -69,17 +70,6 @@ public class ArmFlywheel extends SubsystemBase {
             )
         );
         m_pidController.setTolerance(IntakeConstants.FlywheelConstants.kTargetToleranceRPM);
-
-        // INITIALIZE TUNABLE VALUES
-        // We put the starting values onto SmartDashboard so they appear immediately
-        SmartDashboard.putNumber("Arm/Flywheel/kP", IntakeConstants.FlywheelConstants.kP);
-        SmartDashboard.putNumber("Arm/Flywheel/kI", IntakeConstants.FlywheelConstants.kI);
-        SmartDashboard.putNumber("Arm/Flywheel/kD", IntakeConstants.FlywheelConstants.kD);
-        SmartDashboard.putNumber("Arm/Flywheel/kS", IntakeConstants.FlywheelConstants.kS);
-        SmartDashboard.putNumber("Arm/Flywheel/kV", IntakeConstants.FlywheelConstants.kV);
-        SmartDashboard.putNumber("Arm/Flywheel/kA", IntakeConstants.FlywheelConstants.kA);
-        SmartDashboard.putNumber("Arm/Flywheel/Target", IntakeConstants.FlywheelConstants.kTargetRPM);
-        SmartDashboard.putNumber("Arm/Flywheel/Voltage", 0);
     }
 
     // Runs every 20ms
@@ -87,15 +77,19 @@ public class ArmFlywheel extends SubsystemBase {
     public void periodic() {
         // 2. TELEMETRY FOR ADVANTAGESCOPE
         // Graph these two lines together to see how well you are tracking
-        SmartDashboard.putNumber("Arm/Flywheel/SetpointRPM", m_targetRPM);
-        SmartDashboard.putNumber("Arm/Flywheel/ActualRPM", m_encoder.getVelocity());
-        
+        if (Constants.verbose) {
+            SmartDashboard.putNumber("Arm/Flywheel/SetpointRPM", m_targetRPM);
+            SmartDashboard.putNumber("Arm/Flywheel/ActualRPM", m_encoder.getVelocity());
+        }
+
         // Useful for seeing if you are maxing out your battery (12V)
-        SmartDashboard.putNumber("Arm/Flywheel/AppliedVolts", m_motor.getAppliedOutput() * m_motor.getBusVoltage());
-        SmartDashboard.putNumber("Arm/Flywheel/AppliedCurrent", m_motor.getOutputCurrent());
-        SmartDashboard.putBoolean("Arm/Flywheel/atSetpoint", atSetpoint());
-        SmartDashboard.putNumber("Arm/Flywheel/PIDSetpoint", m_pidController.getSetpoint().position);
-        SmartDashboard.putNumber("Arm/Flywheel/PIDAcceleration", m_pidController.getSetpoint().velocity);
+        if (Constants.verbose) {
+            SmartDashboard.putNumber("Arm/Flywheel/AppliedVolts", m_motor.getAppliedOutput() * m_motor.getBusVoltage());
+            SmartDashboard.putNumber("Arm/Flywheel/AppliedCurrent", m_motor.getOutputCurrent());
+            SmartDashboard.putBoolean("Arm/Flywheel/atSetpoint", atSetpoint());
+            SmartDashboard.putNumber("Arm/Flywheel/PIDSetpoint", m_pidController.getSetpoint().position);
+            SmartDashboard.putNumber("Arm/Flywheel/PIDAcceleration", m_pidController.getSetpoint().velocity);
+        }
     }
 
     /** 

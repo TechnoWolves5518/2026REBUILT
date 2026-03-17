@@ -18,6 +18,8 @@ import com.revrobotics.PersistMode;
 
 import frc.robot.Constants.LauncherConstants.FeederConstants;
 
+import frc.robot.Constants;
+
 import com.revrobotics.sim.SparkMaxSim;
 import edu.wpi.first.math.system.plant.DCMotor;
 
@@ -98,24 +100,6 @@ public class Feeder extends SubsystemBase {
             )
         );
         m_pidController2.setTolerance(FeederConstants.Lower.kTargetToleranceRPM);
-
-        // INITIALIZE TUNABLE VALUES
-        // We put the starting values onto SmartDashboard so they appear immediately
-        SmartDashboard.putNumber("Launcher/Feeder/Upper/kP", FeederConstants.Upper.kP);
-        SmartDashboard.putNumber("Launcher/Feeder/Upper/kI", FeederConstants.Upper.kI);
-        SmartDashboard.putNumber("Launcher/Feeder/Upper/kD", FeederConstants.Upper.kD);
-        SmartDashboard.putNumber("Launcher/Feeder/Upper/kS", FeederConstants.Upper.kS);
-        SmartDashboard.putNumber("Launcher/Feeder/Upper/kV", FeederConstants.Upper.kV);
-        SmartDashboard.putNumber("Launcher/Feeder/Upper/kA", FeederConstants.Upper.kA);
-        SmartDashboard.putNumber("Launcher/Feeder/Upper/Voltage", 0);
-        SmartDashboard.putNumber("Launcher/Feeder/Lower/kP", FeederConstants.Lower.kP);
-        SmartDashboard.putNumber("Launcher/Feeder/Lower/kI", FeederConstants.Lower.kI);
-        SmartDashboard.putNumber("Launcher/Feeder/Lower/kD", FeederConstants.Lower.kD);
-        SmartDashboard.putNumber("Launcher/Feeder/Lower/kS", FeederConstants.Lower.kS);
-        SmartDashboard.putNumber("Launcher/Feeder/Lower/kV", FeederConstants.Lower.kV);
-        SmartDashboard.putNumber("Launcher/Feeder/Lower/kA", FeederConstants.Lower.kA);
-        SmartDashboard.putNumber("Launcher/Feeder/Lower/Voltage", 0);
-        SmartDashboard.putNumber("Launcher/Feeder/Main/Target", 4000);
     }
 
     /** Retrieves the geared velocity of the upper motor. */
@@ -133,22 +117,26 @@ public class Feeder extends SubsystemBase {
     public void periodic() {
         // 2. TELEMETRY FOR ADVANTAGESCOPE
         // Graph these two lines together to see how well you are tracking
-        SmartDashboard.putNumber("Launcher/Feeder/Main/SetpointRPM", m_targetRPM);
-        SmartDashboard.putNumber("Launcher/Feeder/Upper/ActualRPM", getVelocityGeared());
-        SmartDashboard.putNumber("Launcher/Feeder/Lower/ActualRPM", getVelocityGeared2());
-        
+
+        if (Constants.verbose) {
+            SmartDashboard.putNumber("Launcher/Feeder/Main/SetpointRPM", m_targetRPM);
+            SmartDashboard.putNumber("Launcher/Feeder/Upper/ActualRPM", getVelocityGeared());
+            SmartDashboard.putNumber("Launcher/Feeder/Lower/ActualRPM", getVelocityGeared2());
+        }
+
         // Useful for seeing if you are maxing out your battery (12V)
-        SmartDashboard.putNumber("Launcher/Feeder/Upper/AppliedVolts", m_motor.getAppliedOutput() * m_motor.getBusVoltage());
-        SmartDashboard.putNumber("Launcher/Feeder/Upper/AppliedCurrent", m_motor.getOutputCurrent());
-        SmartDashboard.putBoolean("Launcher/Feeder/Upper/atSetpoint", atSetpoint());
-        SmartDashboard.putNumber("Launcher/Feeder/Upper/PIDSetpoint", m_pidController.getSetpoint().position);
-        SmartDashboard.putNumber("Launcher/Feeder/Upper/PIDAcceleration", m_pidController.getSetpoint().velocity);
-        
-        SmartDashboard.putNumber("Launcher/Feeder/Lower/AppliedVolts", m_motor2.getAppliedOutput() * m_motor2.getBusVoltage());
-        SmartDashboard.putNumber("Launcher/Feeder/Lower/AppliedCurrent", m_motor2.getOutputCurrent());
-        SmartDashboard.putBoolean("Launcher/Feeder/Lower/atSetpoint", atSetpoint2());
-        SmartDashboard.putNumber("Launcher/Feeder/Lower/PIDSetpoint", m_pidController2.getSetpoint().position);
-        SmartDashboard.putNumber("Launcher/Feeder/Lower/PIDAcceleration", m_pidController2.getSetpoint().velocity);
+        if (Constants.verbose) {
+            SmartDashboard.putNumber("Launcher/Feeder/Upper/AppliedVolts", m_motor.getAppliedOutput() * m_motor.getBusVoltage());
+            SmartDashboard.putNumber("Launcher/Feeder/Upper/AppliedCurrent", m_motor.getOutputCurrent());
+            SmartDashboard.putBoolean("Launcher/Feeder/Upper/atSetpoint", atSetpoint());
+            SmartDashboard.putNumber("Launcher/Feeder/Upper/PIDSetpoint", m_pidController.getSetpoint().position);
+            SmartDashboard.putNumber("Launcher/Feeder/Upper/PIDAcceleration", m_pidController.getSetpoint().velocity);
+            SmartDashboard.putNumber("Launcher/Feeder/Lower/AppliedVolts", m_motor2.getAppliedOutput() * m_motor2.getBusVoltage());
+            SmartDashboard.putNumber("Launcher/Feeder/Lower/AppliedCurrent", m_motor2.getOutputCurrent());
+            SmartDashboard.putBoolean("Launcher/Feeder/Lower/atSetpoint", atSetpoint2());
+            SmartDashboard.putNumber("Launcher/Feeder/Lower/PIDSetpoint", m_pidController2.getSetpoint().position);
+            SmartDashboard.putNumber("Launcher/Feeder/Lower/PIDAcceleration", m_pidController2.getSetpoint().velocity);
+        }
     }
 
     /** Checks if the upper motor is within 100 RPM of the target velocity. */
