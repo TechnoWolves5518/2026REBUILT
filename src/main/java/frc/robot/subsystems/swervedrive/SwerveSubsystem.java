@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.DoubleConsumer;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import org.json.simple.parser.ParseException;
@@ -116,7 +117,7 @@ public class SwerveSubsystem extends SubsystemBase
     setupPathPlanner();
   }
 
-  public Command autoPointWhileDriving(DoubleSupplier xSupplier, DoubleSupplier ySupplier)
+  public Command autoPointWhileDriving(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleConsumer angleConsumer)
   {
     PIDController thetaPID = new PIDController(DrivebaseConstants.AutoAngleConstants.ANGLE_KP,
                                                DrivebaseConstants.AutoAngleConstants.ANGLE_KI,
@@ -135,7 +136,19 @@ public class SwerveSubsystem extends SubsystemBase
       }
 
       Translation2d delta = targetPose.minus(pose.getTranslation());
-      Rotation2d targetHeading = new Rotation2d(Math.atan2(delta.getY(), delta.getX()));
+      Rotation2d targetHeading = new Rotation2d(Math.atan2(delta.getY(), delta.getX())).plus(Rotation2d.fromDegrees(180));
+
+      double distance = targetPose.getDistance(pose.getTranslation());
+      double targetAngle = frc.robot.Constants.LauncherConstants.RotatorConstants.launcherKnownGoodAngle + 
+                           (distance - frc.robot.Constants.LauncherConstants.RotatorConstants.launcherKnownGoodDistance) * 
+                           frc.robot.Constants.LauncherConstants.RotatorConstants.launcherAngleSlope;
+
+      targetAngle = Math.max(frc.robot.Constants.LauncherConstants.RotatorConstants.minAngle, 
+                             Math.min(frc.robot.Constants.LauncherConstants.RotatorConstants.maxAngle, targetAngle));
+
+      if (angleConsumer != null) {
+          angleConsumer.accept(targetAngle);
+      }
 
       double omega = thetaPID.calculate(pose.getRotation().getRadians(), targetHeading.getRadians());
 
@@ -266,7 +279,7 @@ public class SwerveSubsystem extends SubsystemBase
 
     //Preload PathPlanner Path finding
     // IF USING CUSTOM PATHFINDER ADD BEFORE THIS LINE
-    PathfindingCommand.warmupCommand().schedule();
+    edu.wpi.first.wpilibj2.command.CommandScheduler.getInstance().schedule(PathfindingCommand.warmupCommand());
   }
 
   /**

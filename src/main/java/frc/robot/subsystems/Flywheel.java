@@ -31,7 +31,6 @@ public class Flywheel extends SubsystemBase {
     private double m_targetRPM = 0.0;
     private boolean m_running = false;
 
-    @SuppressWarnings("removal")
     public Flywheel() {
         m_motor = new SparkMax(LauncherConstants.FlywheelConstants.kMotorID, MotorType.kBrushless);
         m_motorSim = new SparkMaxSim(m_motor, DCMotor.getNEO(1));
@@ -110,7 +109,7 @@ public class Flywheel extends SubsystemBase {
 
         // Use the setpoint from the profile (position is RPM, velocity is RPM/s acceleration)
         TrapezoidProfile.State setpoint = m_pidController.getSetpoint();
-        double ffOutput = m_feedforward.calculate(setpoint.position, setpoint.velocity);
+        double ffOutput = m_feedforward.calculateWithVelocities(m_encoder.getVelocity(), setpoint.position);
 
         m_motor.setVoltage(ffOutput + pidOutput);
     }

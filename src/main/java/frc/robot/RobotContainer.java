@@ -229,11 +229,11 @@ public class RobotContainer
     } else
     {
       driverXbox.a().onTrue((Commands.runOnce(drivebase::zeroGyro)));
-      driverXbox.x().whileTrue(drivebase.autoPointWhileDriving(() -> driverXbox.getLeftY() * -1, () -> driverXbox.getLeftX() * -1));
+      driverXbox.x().whileTrue(drivebase.autoPointWhileDriving(() -> driverXbox.getLeftY() * -1, () -> driverXbox.getLeftX() * -1, launcherRotate::setAngle));
       driverXbox.start().whileTrue(Commands.none());
       driverXbox.back().whileTrue(Commands.none());
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
-      driverXbox.rightTrigger().whileTrue(drivebase.autoPointWhileDriving(() -> driverXbox.getLeftY() * -1, () -> driverXbox.getLeftX() * -1));
+      driverXbox.rightTrigger().whileTrue(drivebase.autoPointWhileDriving(() -> driverXbox.getLeftY() * -1, () -> driverXbox.getLeftX() * -1, launcherRotate::setAngle));
       if (Constants.hasFlywheel) {
         schmoXbox.rightBumper().whileTrue(flywheel.runFlywheelCommandSD());
       } else {

@@ -89,7 +89,7 @@ public class LauncherRotate extends SubsystemBase {
     targetAngle = Math.max(targetAngle, LauncherConstants.RotatorConstants.minAngle);
     double pid = pidController.calculate(angle, targetAngle);
     SmartDashboard.putNumber("Launcher/Arm/PID/PIDOutput", pid);
-    double ff = feedforward.calculate(pidController.getSetpoint().position, pidController.getSetpoint().velocity);
+    double ff = feedforward.calculateWithVelocities(encoder.getVelocity(), pidController.getSetpoint().velocity);
     SmartDashboard.putNumber("Launcher/Arm/PID/FeedforwardOutput", ff);
     SmartDashboard.putNumber("Launcher/Arm/PID/TotalOutput", pid + ff);
     motor.setVoltage(pid + ff);

@@ -53,14 +53,12 @@ public class Arm extends SubsystemBase {
     motor.stopMotor();
   }
   
-  @SuppressWarnings("removal")
   private void setBrakeMode() {
     SparkMaxConfig config = new SparkMaxConfig();
     config.idleMode(SparkMaxConfig.IdleMode.kBrake);
     motor.configure(config, SparkMax.ResetMode.kNoResetSafeParameters, SparkMax.PersistMode.kNoPersistParameters);
   }
 
-  @SuppressWarnings("removal")
   private void setCoastMode() {
     SparkMaxConfig config = new SparkMaxConfig();
     config.idleMode(SparkMaxConfig.IdleMode.kCoast);
