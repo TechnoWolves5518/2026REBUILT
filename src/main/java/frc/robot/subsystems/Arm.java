@@ -68,7 +68,8 @@ public class Arm extends SubsystemBase {
 
   /** Applies a negative voltage to lift the arm and sets it to brake mode. */
   public void liftArm() {
-    motor.setVoltage(Constants.IntakeConstants.ArmConstants.voltsUp);
+    motor.setVoltage(Constants.IntakeConstants.ArmConstants.voltsUp
+    );
     setBrakeMode();
   }
 

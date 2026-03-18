@@ -181,7 +181,7 @@ public class ArmFlywheel extends SubsystemBase {
     /** Returns a command that runs the flywheel using the target RPM from SmartDashboard. */
     public Command runFlywheelCommandSD() {
             return this.runEnd(
-                () -> setTargetVelocity(-SmartDashboard.getNumber("Arm/Flywheel/Target", 0)),
+                () -> setTargetVelocity(-Constants.IntakeConstants.FlywheelConstants.kTargetRPM),
                 this::stop
             );
         }
