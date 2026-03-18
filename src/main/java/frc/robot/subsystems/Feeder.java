@@ -238,7 +238,7 @@ public class Feeder extends SubsystemBase {
         double ffOutput = m_feedforward.calculate(setpoint.position, setpoint.velocity);
         
         TrapezoidProfile.State setpoint2 = m_pidController2.getSetpoint();
-        double ffOutput2 = m_feedforward2.calculateWithVelocities(setpoint2.position, setpoint2.velocity);
+        double ffOutput2 = m_feedforward2.calculate(setpoint2.position, setpoint2.velocity);
 
         m_motor.setVoltage(ffOutput + pidOutput);
         m_motor2.setVoltage(ffOutput2 + pidOutput2);
