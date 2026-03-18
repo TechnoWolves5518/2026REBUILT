@@ -136,7 +136,7 @@ public class SwerveSubsystem extends SubsystemBase
       }
 
       Translation2d delta = targetPose.minus(pose.getTranslation());
-      Rotation2d targetHeading = new Rotation2d(Math.atan2(delta.getY(), delta.getX())).plus(Rotation2d.fromDegrees(180));
+      Rotation2d targetHeading = new Rotation2d(Math.atan2(delta.getY(), delta.getX()));
 
       double distance = targetPose.getDistance(pose.getTranslation());
       double targetAngle = frc.robot.Constants.LauncherConstants.RotatorConstants.launcherKnownGoodAngle + 

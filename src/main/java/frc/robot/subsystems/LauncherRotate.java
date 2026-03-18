@@ -37,6 +37,9 @@ public class LauncherRotate extends SubsystemBase {
   @SuppressWarnings("unused")
   private SparkMaxSim motorSim;
   private RelativeEncoder encoder;
+  private double goodDistance = LauncherConstants.RotatorConstants.launcherKnownGoodDistance;
+  private double goodAngle = LauncherConstants.RotatorConstants.launcherKnownGoodAngle;
+  private double slope = LauncherConstants.RotatorConstants.launcherAngleSlope;
   private boolean systemRun = true;
   @AutoLogOutput(key="Launcher/Arm/EncoderVelocity")
   private double currentVelocity;
