@@ -17,13 +17,20 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.PersistMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 /**
  * Subsystem for controlling the main Arm rotation.
  * This subsystem uses a SparkMax motor controller and an absolute encoder
  * to monitor the arm's angle and apply simple voltage commands for lifting and throwing.
  */
 public class Arm extends SubsystemBase {
+  @AutoLogOutput(key="Arm/Rotator/EncoderPosition")
   private double angle; // Current height of the arm in meters
+  @AutoLogOutput(key="Arm/Rotator/EncoderVelocity")
+  private double velocity;
+  @AutoLogOutput(key="Arm/Rotator/AppliedCurrent")
+  private double current;
   private SparkMax motor;
   @SuppressWarnings("unused")
   private SparkMaxSim motorSim;
@@ -41,12 +48,14 @@ public class Arm extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     angle = encoder.getPosition();
+    velocity = encoder.getVelocity();
+    current = motor.getOutputCurrent();
     
     // Publish telemetry to SmartDashboard
     if (Constants.verbose) {
       SmartDashboard.putNumber("Arm/Rotator/EncoderPosition", angle);
-      SmartDashboard.putNumber("Arm/Rotator/EncoderVelocity", encoder.getVelocity());
-      SmartDashboard.putNumber("Arm/Rotator/AppliedCurrent", motor.getOutputCurrent());
+      SmartDashboard.putNumber("Arm/Rotator/EncoderVelocity", velocity);
+      SmartDashboard.putNumber("Arm/Rotator/AppliedCurrent", current);
     }
 
   }

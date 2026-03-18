@@ -34,6 +34,7 @@ import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.LauncherRotate;
 import frc.robot.subsystems.ArmFlywheel;
 import frc.robot.subsystems.Arm;
+import org.littletonrobotics.junction.AutoLogOutput;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -42,7 +43,8 @@ import frc.robot.subsystems.Arm;
  */
 public class RobotContainer
 {
-
+  @AutoLogOutput(key="Robot/RobotPose")
+  private Pose2d robotPose = new Pose2d();
   private final LauncherRotate launcherRotate = new LauncherRotate();
   private final ArmFlywheel armFlywheel = new ArmFlywheel();
   // Define Field2d for SmartDashboard
@@ -162,7 +164,8 @@ public class RobotContainer
 
   public void PublishSystemData() {
     // Add robot pose to Field2D and send data to DriverStation
-    field.setRobotPose(drivebase.getPose());
+    robotPose = drivebase.getPose();
+    field.setRobotPose(robotPose);
   }
 
 

@@ -23,6 +23,8 @@ import frc.robot.Constants;
 import com.revrobotics.sim.SparkMaxSim;
 import edu.wpi.first.math.system.plant.DCMotor;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 /**
  * Subsystem for controlling the Feeder, consisting of an upper and lower motor.
  * Each motor is controlled independently with its own relative encoder,
@@ -42,7 +44,34 @@ public class Feeder extends SubsystemBase {
     private final ProfiledPIDController m_pidController;
     private final ProfiledPIDController m_pidController2;
 
+    @AutoLogOutput(key="Launcher/Feeder/Upper/ActualRPM")
+    private double upperWheelVelocity;
+    @AutoLogOutput(key="Launcher/Feeder/Upper/AppliedVolts")
+    private double upperAppliedVolts;
+    @AutoLogOutput(key="Launcher/Feeder/Upper/AppliedCurrent")
+    private double upperAppliedCurrent;
+    @AutoLogOutput(key="Launcher/Feeder/Upper/atSetpoint")
+    private boolean upperAtSetpoint;
+    @AutoLogOutput(key="Launcher/Feeder/Upper/PIDSetpoint")
+    private double upperPidSetpoint;
+    @AutoLogOutput(key="Launcher/Feeder/Upper/PIDAcceleration")
+    private double upperPidAcceleration;
+    @AutoLogOutput(key="Launcher/Feeder/Lower/ActualRPM")
+    private double lowerWheelVelocity;
+    @AutoLogOutput(key="Launcher/Feeder/Lower/AppliedVolts")
+    private double lowerAppliedVolts;
+    @AutoLogOutput(key="Launcher/Feeder/Lower/AppliedCurrent")
+    private double lowerAppliedCurrent;
+    @AutoLogOutput(key="Launcher/Feeder/Lower/atSetpoint")
+    private boolean lowerAtSetpoint;
+    @AutoLogOutput(key="Launcher/Feeder/Lower/PIDSetpoint")
+    private double lowerPidSetpoint;
+    @AutoLogOutput(key="Launcher/Feeder/Lower/PIDAcceleration")
+    private double lowerPidAcceleration;
+
+
     // We store the target RPM here so we can log it in periodic()
+    @AutoLogOutput(key="Launcher/Feeder/TargetRPM")
     private double m_targetRPM = 0.0;
     private boolean m_running = false;
 
@@ -117,12 +146,14 @@ public class Feeder extends SubsystemBase {
     public void periodic() {
         // 2. TELEMETRY FOR ADVANTAGESCOPE
         // Graph these two lines together to see how well you are tracking
-
         if (Constants.verbose) {
             SmartDashboard.putNumber("Launcher/Feeder/Main/SetpointRPM", m_targetRPM);
             SmartDashboard.putNumber("Launcher/Feeder/Upper/ActualRPM", getVelocityGeared());
             SmartDashboard.putNumber("Launcher/Feeder/Lower/ActualRPM", getVelocityGeared2());
         }
+        upperWheelVelocity = getVelocityGeared();
+        lowerWheelVelocity = getVelocityGeared2();
+
 
         // Useful for seeing if you are maxing out your battery (12V)
         if (Constants.verbose) {
@@ -137,6 +168,16 @@ public class Feeder extends SubsystemBase {
             SmartDashboard.putNumber("Launcher/Feeder/Lower/PIDSetpoint", m_pidController2.getSetpoint().position);
             SmartDashboard.putNumber("Launcher/Feeder/Lower/PIDAcceleration", m_pidController2.getSetpoint().velocity);
         }
+        upperAppliedVolts = m_motor.getAppliedOutput() * m_motor.getBusVoltage();
+        upperAppliedCurrent = m_motor.getOutputCurrent();
+        upperAtSetpoint = atSetpoint();
+        upperPidSetpoint = m_pidController.getSetpoint().position;
+        upperPidAcceleration = m_pidController.getSetpoint().velocity;
+        lowerAppliedVolts = m_motor2.getAppliedOutput() * m_motor2.getBusVoltage();
+        lowerAppliedCurrent = m_motor2.getOutputCurrent();
+        lowerAtSetpoint = atSetpoint2();
+        lowerPidSetpoint = m_pidController2.getSetpoint().position;
+        lowerPidAcceleration = m_pidController2.getSetpoint().velocity;
     }
 
     /** Checks if the upper motor is within 100 RPM of the target velocity. */

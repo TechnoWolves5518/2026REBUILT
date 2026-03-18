@@ -19,13 +19,17 @@ import frc.robot.Constants;
 import com.revrobotics.sim.SparkMaxSim;
 import edu.wpi.first.math.system.plant.DCMotor;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 /**
  * Subsystem for controlling the launcher's rotational arm.
  * Uses a SparkMax motor with a relative encoder, SimpleMotorFeedforward, and
  * ProfiledPIDController to achieve precise angles for aiming the launcher.
  */
 public class LauncherRotate extends SubsystemBase {
+  @AutoLogOutput(key="Launcher/Arm/EncoderPosition")
   private double angle; // Current angle of the arm in degrees
+  @AutoLogOutput(key="Launcher/Arm/Setpoint")
   private double setpoint;
   private ProfiledPIDController pidController; // PID controller for arm height control
   private SimpleMotorFeedforward feedforward; // Feedforward for arm control
@@ -34,6 +38,13 @@ public class LauncherRotate extends SubsystemBase {
   private SparkMaxSim motorSim;
   private RelativeEncoder encoder;
   private boolean systemRun = true;
+  @AutoLogOutput(key="Launcher/Arm/EncoderVelocity")
+  private double currentVelocity;
+  @AutoLogOutput(key="Launcher/Arm/AppliedVoltage")
+  private double appliedVoltage;
+  @AutoLogOutput(key="Launcher/Arm/AppliedCurrent")
+  private double appliedCurrent;
+
 
   /** Creates a new LauncherRotate subsystem. */
   public LauncherRotate() {
@@ -67,14 +78,18 @@ public class LauncherRotate extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     angle = encoder.getPosition() * 360; // Convert encoder position to degrees
+    currentVelocity = encoder.getVelocity();
+    appliedVoltage = motor.getAppliedOutput() * motor.getBusVoltage();
+    appliedCurrent = motor.getOutputCurrent();
     
     // Publish telemetry
     if (Constants.verbose) {
       SmartDashboard.putNumber("Launcher/Arm/EncoderPosition", angle);
-      SmartDashboard.putNumber("Launcher/Arm/EncoderVelocity", encoder.getVelocity());
-      SmartDashboard.putNumber("Launcher/Arm/AppliedVoltage", motor.getAppliedOutput() * motor.getBusVoltage());
-      SmartDashboard.putNumber("Launcher/Arm/AppliedCurrent", motor.getOutputCurrent());
+      SmartDashboard.putNumber("Launcher/Arm/EncoderVelocity", currentVelocity);
+      SmartDashboard.putNumber("Launcher/Arm/AppliedVoltage", appliedVoltage);
+      SmartDashboard.putNumber("Launcher/Arm/AppliedCurrent", appliedCurrent);
     }
+
   }
 
   /**

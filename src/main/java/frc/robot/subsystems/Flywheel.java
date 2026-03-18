@@ -22,6 +22,8 @@ import frc.robot.Constants;
 import com.revrobotics.sim.SparkMaxSim;
 import edu.wpi.first.math.system.plant.DCMotor;
 
+import org.littletonrobotics.junction.AutoLogOutput;
+
 /**
  * Subsystem for controlling the main launcher flywheel.
  * Utilizes a SparkMax motor, relative encoder, ProfiledPIDController,
@@ -35,7 +37,22 @@ public class Flywheel extends SubsystemBase {
     private final SimpleMotorFeedforward m_feedforward;
     private final ProfiledPIDController m_pidController;
 
+    @AutoLogOutput(key="Launcher/Flywheel/ActualRPM")
+    private double flywheelVelocity;
+    @AutoLogOutput(key="Launcher/Flywheel/AppliedVolts")
+    private double appliedVolts;
+    @AutoLogOutput(key="Launcher/Flywheel/AppliedCurrent")
+    private double appliedCurrent;
+    @AutoLogOutput(key="Launcher/Flywheel/atSetpoint")
+    private boolean atSetpoint;
+    @AutoLogOutput(key="Launcher/Flywheel/PIDSetpoint")
+    private double pidSetpoint;
+    @AutoLogOutput(key="Launcher/Flywheel/PIDAcceleration")
+    private double pidAcceleration;
+
     // We store the target RPM here so we can log it in periodic()
+    
+    @AutoLogOutput(key="Launcher/Flywheel/SetpointRPM")
     private double m_targetRPM = 0.0;
     private boolean m_running = false;
 
@@ -84,6 +101,7 @@ public class Flywheel extends SubsystemBase {
             SmartDashboard.putNumber("Launcher/Flywheel/SetpointRPM", m_targetRPM);
             SmartDashboard.putNumber("Launcher/Flywheel/ActualRPM", m_encoder.getVelocity());
         }
+        flywheelVelocity = m_encoder.getVelocity();
 
         // Useful for seeing if you are maxing out your battery (12V)
         if (Constants.verbose) {
@@ -93,6 +111,12 @@ public class Flywheel extends SubsystemBase {
             SmartDashboard.putNumber("Launcher/Flywheel/PIDSetpoint", m_pidController.getSetpoint().position);
             SmartDashboard.putNumber("Launcher/Flywheel/PIDAcceleration", m_pidController.getSetpoint().velocity);
         }
+
+        appliedVolts = m_motor.getAppliedOutput() * m_motor.getBusVoltage();
+        appliedCurrent = m_motor.getOutputCurrent();
+        atSetpoint = atSetpoint();
+        pidSetpoint = m_pidController.getSetpoint().position;
+        pidAcceleration = m_pidController.getSetpoint().velocity;
     }
 
     /** 
