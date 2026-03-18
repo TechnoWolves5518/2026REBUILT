@@ -62,13 +62,13 @@ public class Arm extends SubsystemBase {
 
   /** Applies a positive voltage to throw/lower the arm and sets it to coast mode. */
   public void throwArm() {
-    motor.setVoltage(5);
+    motor.setVoltage(Constants.IntakeConstants.ArmConstants.voltsDown);
     setCoastMode();
   }
 
   /** Applies a negative voltage to lift the arm and sets it to brake mode. */
   public void liftArm() {
-    motor.setVoltage(-5);
+    motor.setVoltage(Constants.IntakeConstants.ArmConstants.voltsUp);
     setBrakeMode();
   }
 
