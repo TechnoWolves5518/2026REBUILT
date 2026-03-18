@@ -30,7 +30,7 @@ public final class Constants
   public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);
   public static final double LOOP_TIME  = 0.13; //s, 20ms + 110ms sprk max velocity lag
   public static final double MAX_SPEED  = Units.feetToMeters(14.5);
-  public static final boolean verbose = false;
+  public static final boolean verbose = true;
   // Maximum speed of the robot in meters per second, used to limit acceleration.
 
 //  public static final class AutonConstants
@@ -112,11 +112,11 @@ public final class Constants
       // kS: Volts to overcome static friction
       // kV: Volts per RPM (e.g., 12V / 5676 RPM ≈ 0.0021)
       // kA: Volts per (RPM/s) acceleration
-      public static final double kS = 0.15; 
+      public static final double kS = 0.183; 
       // 1/459
-      public static final double kV = 0.0021;
+      public static final double kV = 0.0022;
       // 1/500
-      public static final double kA = 0.0005;
+      public static final double kA = 0.001;
 
       // PID Gains
       public static final double kP = 0.006;

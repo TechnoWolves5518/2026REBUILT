@@ -158,7 +158,7 @@ public class Flywheel extends SubsystemBase {
 
         // Use the setpoint from the profile (position is RPM, velocity is RPM/s acceleration) to calculate feedforward
         TrapezoidProfile.State setpoint = m_pidController.getSetpoint();
-        double ffOutput = m_feedforward.calculateWithVelocities(m_encoder.getVelocity(), setpoint.position);
+        double ffOutput = m_feedforward.calculate(setpoint.position, setpoint.velocity);
 
         m_motor.setVoltage(ffOutput + pidOutput);
     }

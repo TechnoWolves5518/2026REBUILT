@@ -124,7 +124,7 @@ public class LauncherRotate extends SubsystemBase {
     SmartDashboard.putNumber("Launcher/Arm/PID/PIDOutput", pid);
     
     // Calculate feedforward using the current encoder velocity and profile setpoint velocity
-    double ff = feedforward.calculate(pidController.getSetpoint().velocity);
+    double ff = feedforward.calculate(pidController.getSetpoint().position, pidController.getSetpoint().velocity);
     SmartDashboard.putNumber("Launcher/Arm/PID/FeedforwardOutput", ff);
     SmartDashboard.putNumber("Launcher/Arm/PID/TotalOutput", pid + ff);
     

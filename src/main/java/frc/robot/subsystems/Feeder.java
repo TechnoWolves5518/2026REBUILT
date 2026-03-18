@@ -235,10 +235,10 @@ public class Feeder extends SubsystemBase {
 
         // Use the setpoint from the profile (position is RPM, velocity is RPM/s acceleration) to calculate feedforward
         TrapezoidProfile.State setpoint = m_pidController.getSetpoint();
-        double ffOutput = m_feedforward.calculateWithVelocities(m_encoder.getVelocity(), setpoint.position);
+        double ffOutput = m_feedforward.calculate(setpoint.position, setpoint.velocity);
         
         TrapezoidProfile.State setpoint2 = m_pidController2.getSetpoint();
-        double ffOutput2 = m_feedforward2.calculateWithVelocities(m_encoder2.getVelocity(), setpoint2.position);
+        double ffOutput2 = m_feedforward2.calculateWithVelocities(setpoint2.position, setpoint2.velocity);
 
         m_motor.setVoltage(ffOutput + pidOutput);
         m_motor2.setVoltage(ffOutput2 + pidOutput2);

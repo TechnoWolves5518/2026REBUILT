@@ -236,11 +236,13 @@ public class RobotContainer
       driverXbox.leftBumper().whileTrue(Commands.runOnce(drivebase::lock, drivebase).repeatedly());
       driverXbox.rightTrigger().whileTrue(drivebase.autoPointWhileDriving(() -> driverXbox.getLeftY() * -1, () -> driverXbox.getLeftX() * -1, launcherRotate::setAngle));
       schmoXbox.leftTrigger().whileTrue(armFlywheel.runFlywheelCommandSD());
-      schmoXbox.rightTrigger().whileTrue(spinUpAndFeedCommand());
+      schmoXbox.leftBumper().whileTrue(feeder.runFeederSD());
       schmoXbox.a().whileTrue(arm.runThrow());
       schmoXbox.y().whileTrue(arm.runLift());
       schmoXbox.b().whileTrue(armFlywheel.runFlywheelVoltage());
       schmoXbox.button(7).onTrue(launcherRotate.EncoderResetCommand());
+      schmoXbox.rightBumper().whileTrue(flywheel.runFlywheelCommandSD());
+      schmoXbox.rightTrigger().whileTrue(spinUpAndFeedCommand());
     }
   }
 
