@@ -275,7 +275,7 @@ public class Feeder extends SubsystemBase {
     /** Returns a command that runs the feeder using the target RPM from SmartDashboard. */
     public Command runFeederSD() {
             return this.runEnd(
-                () -> setTargetVelocity(SmartDashboard.getNumber("Launcher/Feeder/Main/Target", 4000)),
+                () -> setTargetVelocity(FeederConstants.kTargetRPM),
                 this::stop
             );
         }
