@@ -284,4 +284,8 @@ public class Feeder extends SubsystemBase {
     public Command runFeederVoltage() {
         return this.runEnd(this::setTargetVoltage, this::stop);
     }
+
+    public Command stopCommand() {
+        return this.runOnce(this::stop);
+    }
 }

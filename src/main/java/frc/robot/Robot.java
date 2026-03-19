@@ -56,7 +56,7 @@ public class Robot extends LoggedRobot
     WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
 
     // Starts recording to data log
-    Logger.addDataReceiver(new WPILOGWriter("/u/logs/system"));
+    Logger.addDataReceiver(new WPILOGWriter("/u/debug/logs"));
     Logger.start();
 
     if (isSimulation())

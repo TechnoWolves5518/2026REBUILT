@@ -200,4 +200,8 @@ public class Flywheel extends SubsystemBase {
     public Command runFlywheelVoltage() {
         return this.runEnd(this::setTargetVoltage, this::stop);
     }
+
+    public Command stopCommand() {
+        return this.runOnce(this::stop);
+    }
 }

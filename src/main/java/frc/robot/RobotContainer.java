@@ -138,7 +138,7 @@ public class RobotContainer
     
     //Create the NamedCommands that will be used in PathPlanner
     NamedCommands.registerCommand("test", Commands.print("I EXIST"));
-    NamedCommands.registerCommand("spinUpAndFeed", spinUpAndFeedCommand());
+    new EventTrigger("spinUpAndFeed").onTrue(spinUpAndFeedCommand());
     new EventTrigger("runFlywheel").onTrue(flywheel.runFlywheelCommandSD());
     new EventTrigger("runFeeder").onTrue(feeder.runFeederSD());
     new EventTrigger("throwArm").whileTrue(arm.runThrow());
@@ -240,9 +240,10 @@ public class RobotContainer
       schmoXbox.a().whileTrue(arm.runThrow());
       schmoXbox.y().whileTrue(arm.runLift());
       schmoXbox.b().whileTrue(armFlywheel.runFlywheelVoltage());
-      schmoXbox.button(7).onTrue(launcherRotate.EncoderResetCommand());
+      schmoXbox.back().onTrue(launcherRotate.EncoderResetCommand());
       schmoXbox.rightBumper().whileTrue(flywheel.runFlywheelCommandSD());
       schmoXbox.rightTrigger().whileTrue(spinUpAndFeedCommand());
+      schmoXbox.start().onTrue(fullStopCommand());
     }
   }
 
@@ -278,5 +279,9 @@ public class RobotContainer
             feeder.runFeederSD()
         )
     );
+  }
+
+  public Command fullStopCommand() {
+    return Commands.parallel(flywheel.stopCommand(), feeder.stopCommand());
   }
 }
