@@ -134,7 +134,7 @@ public final class Constants
     }
 
     public static final class FeederConstants {
-      public static final double kTargetRPM = 2000;
+      public static final double kTargetRPM = 3000;
       public static final class Upper {
         public static final int kMotorID = 22; // Set your actual CAN ID
         public static final int kCurrentLimit = 80; // Amps

@@ -28,6 +28,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -152,8 +153,8 @@ public class SwerveSubsystem extends SubsystemBase
 
       double omega = thetaPID.calculate(pose.getRotation().getRadians(), targetHeading.getRadians());
 
-      double xVelocity = xSupplier.getAsDouble() * swerveDrive.getMaximumChassisVelocity();
-      double yVelocity = ySupplier.getAsDouble() * swerveDrive.getMaximumChassisVelocity();
+      double xVelocity = MathUtil.applyDeadband(xSupplier.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisVelocity();
+      double yVelocity = MathUtil.applyDeadband(ySupplier.getAsDouble(), 0.05) * swerveDrive.getMaximumChassisVelocity();
 
       if (isRed)
       {
