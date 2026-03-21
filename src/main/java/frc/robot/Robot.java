@@ -10,10 +10,13 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+import org.littletonrobotics.junction.LoggedPowerDistribution;
 import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.LoggedPowerDistribution;
 
 
 /**
@@ -56,6 +59,7 @@ public class Robot extends LoggedRobot
     WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
 
     // Starts recording to data log
+    LoggedPowerDistribution.getInstance(0, ModuleType.kCTRE);
     Logger.addDataReceiver(new WPILOGWriter("/u/debug/logs"));
     Logger.start();
 
