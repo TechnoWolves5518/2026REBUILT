@@ -17,8 +17,6 @@ import com.revrobotics.ResetMode;
 import com.revrobotics.PersistMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import org.littletonrobotics.junction.AutoLogOutput;
-
 /**
  * Subsystem for controlling the main Arm rotation.
  * This subsystem uses a SparkMax motor controller and an absolute encoder
