@@ -138,7 +138,9 @@ public class RobotContainer
     DriverStation.silenceJoystickConnectionWarning(true);
     
     //Create the NamedCommands that will be used in PathPlanner
-    NamedCommands.registerCommand("test", Commands.print("I EXIST"));
+    new EventTrigger("runIntake").whileTrue(armFlywheel.runFlywheelCommandSD());
+    new EventTrigger("stopFeeder").onTrue(feeder.stopCommand());
+    new EventTrigger("stopFlywheel").onTrue(flywheel.stopCommand());
     new EventTrigger("spinUpAndFeed").onTrue(spinUpAndFeedCommand());
     new EventTrigger("runFlywheel").onTrue(flywheel.runFlywheelCommandSD());
     new EventTrigger("runFeeder").onTrue(feeder.runFeederSD());
@@ -147,9 +149,6 @@ public class RobotContainer
     //Have the autoChooser pull in all PathPlanner autos as options
     autoChooser = AutoBuilder.buildAutoChooser();
 
-    //Set the default auto (do nothing) 
-    autoChooser.setDefaultOption("Do Nothing", Commands.none());
-    
     //Put the autoChooser on the SmartDshboard
     SmartDashboard.putData("Auto Chooser", autoChooser);
     SmartDashboard.putData("Field", field);
