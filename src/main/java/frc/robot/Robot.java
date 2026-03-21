@@ -16,8 +16,6 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.littletonrobotics.junction.LoggedPowerDistribution;
 import org.littletonrobotics.junction.LoggedRobot;
-import org.littletonrobotics.junction.LoggedPowerDistribution;
-
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to each mode, as
@@ -56,7 +54,6 @@ public class Robot extends LoggedRobot
     // Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
     // immediately when disabled, but then also let it be pushed more 
     disabledTimer = new Timer();
-    WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
 
     // Starts recording to data log
     LoggedPowerDistribution.getInstance(0, ModuleType.kCTRE);
