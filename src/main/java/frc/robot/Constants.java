@@ -126,7 +126,7 @@ public final class Constants
       public static final double kTargetToleranceRPM = 100.0;
 
       public static final double kMaxVelocityRPM = 5000.0;
-      public static final double kMaxAccelerationRPMps = 5000.0;
+      public static final double kMaxAccelerationRPMps = 5000.0 * 0.5; // halved due to current limit changes
       
       public static final double kGearRatio = 1;
 
