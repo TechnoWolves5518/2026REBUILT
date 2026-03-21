@@ -100,9 +100,9 @@ public final class Constants
 
       public static final double minAngle = 2;
       public static final double maxAngle = 50;
-      public static final double launcherKnownGoodAngle = 25;
+      public static final double launcherKnownGoodAngle = 35;
       public static final double launcherKnownGoodDistance = Units.inchesToMeters(120);
-      public static final double launcherAngleSlope = 8.250000000000001;
+      public static final double launcherAngleSlope = 8.25;
     } // 15 / 
     public static final class FlywheelConstants {
       public static final int kMotorID = 23; // Set your actual CAN ID
