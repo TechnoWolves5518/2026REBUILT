@@ -19,7 +19,6 @@ import frc.robot.Constants;
 import com.revrobotics.sim.SparkMaxSim;
 import edu.wpi.first.math.system.plant.DCMotor;
 
-import org.littletonrobotics.junction.AutoLogOutput;
 
 /**
  * Subsystem for controlling the launcher's rotational arm.

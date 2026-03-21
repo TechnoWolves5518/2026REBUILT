@@ -24,7 +24,6 @@ import edu.wpi.first.math.system.plant.DCMotor;
 
 import edu.wpi.first.wpilibj.Alert;
 
-import org.littletonrobotics.junction.AutoLogOutput;
 
 /**
  * Subsystem for controlling the arm's flywheel.

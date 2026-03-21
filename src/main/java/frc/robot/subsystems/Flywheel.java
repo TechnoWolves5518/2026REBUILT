@@ -22,7 +22,6 @@ import frc.robot.Constants;
 import com.revrobotics.sim.SparkMaxSim;
 import edu.wpi.first.math.system.plant.DCMotor;
 
-import org.littletonrobotics.junction.AutoLogOutput;
 
 import edu.wpi.first.wpilibj.Alert;
 
