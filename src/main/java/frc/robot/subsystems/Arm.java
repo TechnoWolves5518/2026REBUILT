@@ -25,11 +25,8 @@ import org.littletonrobotics.junction.AutoLogOutput;
  * to monitor the arm's angle and apply simple voltage commands for lifting and throwing.
  */
 public class Arm extends SubsystemBase {
-  @AutoLogOutput(key="Arm/Rotator/EncoderPosition")
   private double angle; // Current height of the arm in meters
-  @AutoLogOutput(key="Arm/Rotator/EncoderVelocity")
   private double velocity;
-  @AutoLogOutput(key="Arm/Rotator/AppliedCurrent")
   private double current;
   private SparkMax motor;
   @SuppressWarnings("unused")

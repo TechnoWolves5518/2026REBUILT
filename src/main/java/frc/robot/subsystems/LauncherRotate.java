@@ -27,9 +27,7 @@ import org.littletonrobotics.junction.AutoLogOutput;
  * ProfiledPIDController to achieve precise angles for aiming the launcher.
  */
 public class LauncherRotate extends SubsystemBase {
-  @AutoLogOutput(key="Launcher/Arm/EncoderPosition")
   private double angle; // Current angle of the arm in degrees
-  @AutoLogOutput(key="Launcher/Arm/Setpoint")
   private double setpoint;
   private ProfiledPIDController pidController; // PID controller for arm height control
   private SimpleMotorFeedforward feedforward; // Feedforward for arm control
@@ -41,11 +39,8 @@ public class LauncherRotate extends SubsystemBase {
   private double goodAngle = LauncherConstants.RotatorConstants.launcherKnownGoodAngle;
   private double slope = LauncherConstants.RotatorConstants.launcherAngleSlope;
   private boolean systemRun = true;
-  @AutoLogOutput(key="Launcher/Arm/EncoderVelocity")
   private double currentVelocity;
-  @AutoLogOutput(key="Launcher/Arm/AppliedVoltage")
   private double appliedVoltage;
-  @AutoLogOutput(key="Launcher/Arm/AppliedCurrent")
   private double appliedCurrent;
 
 

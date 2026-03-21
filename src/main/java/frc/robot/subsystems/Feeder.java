@@ -44,34 +44,21 @@ public class Feeder extends SubsystemBase {
     private final ProfiledPIDController m_pidController;
     private final ProfiledPIDController m_pidController2;
 
-    @AutoLogOutput(key="Launcher/Feeder/Upper/ActualRPM")
     private double upperWheelVelocity;
-    @AutoLogOutput(key="Launcher/Feeder/Upper/AppliedVolts")
     private double upperAppliedVolts;
-    @AutoLogOutput(key="Launcher/Feeder/Upper/AppliedCurrent")
     private double upperAppliedCurrent;
-    @AutoLogOutput(key="Launcher/Feeder/Upper/atSetpoint")
     private boolean upperAtSetpoint;
-    @AutoLogOutput(key="Launcher/Feeder/Upper/PIDSetpoint")
     private double upperPidSetpoint;
-    @AutoLogOutput(key="Launcher/Feeder/Upper/PIDAcceleration")
     private double upperPidAcceleration;
-    @AutoLogOutput(key="Launcher/Feeder/Lower/ActualRPM")
     private double lowerWheelVelocity;
-    @AutoLogOutput(key="Launcher/Feeder/Lower/AppliedVolts")
     private double lowerAppliedVolts;
-    @AutoLogOutput(key="Launcher/Feeder/Lower/AppliedCurrent")
     private double lowerAppliedCurrent;
-    @AutoLogOutput(key="Launcher/Feeder/Lower/atSetpoint")
     private boolean lowerAtSetpoint;
-    @AutoLogOutput(key="Launcher/Feeder/Lower/PIDSetpoint")
     private double lowerPidSetpoint;
-    @AutoLogOutput(key="Launcher/Feeder/Lower/PIDAcceleration")
     private double lowerPidAcceleration;
 
 
     // We store the target RPM here so we can log it in periodic()
-    @AutoLogOutput(key="Launcher/Feeder/TargetRPM")
     private double m_targetRPM = 0.0;
     private boolean m_running = false;
 

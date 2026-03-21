@@ -37,22 +37,15 @@ public class Flywheel extends SubsystemBase {
     private final SimpleMotorFeedforward m_feedforward;
     private final ProfiledPIDController m_pidController;
 
-    @AutoLogOutput(key="Launcher/Flywheel/ActualRPM")
     private double flywheelVelocity;
-    @AutoLogOutput(key="Launcher/Flywheel/AppliedVolts")
     private double appliedVolts;
-    @AutoLogOutput(key="Launcher/Flywheel/AppliedCurrent")
     private double appliedCurrent;
-    @AutoLogOutput(key="Launcher/Flywheel/atSetpoint")
     private boolean atSetpoint;
-    @AutoLogOutput(key="Launcher/Flywheel/PIDSetpoint")
     private double pidSetpoint;
-    @AutoLogOutput(key="Launcher/Flywheel/PIDAcceleration")
     private double pidAcceleration;
 
     // We store the target RPM here so we can log it in periodic()
     
-    @AutoLogOutput(key="Launcher/Flywheel/SetpointRPM")
     private double m_targetRPM = 0.0;
     private boolean m_running = false;
 
