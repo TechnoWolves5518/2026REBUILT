@@ -58,6 +58,8 @@ public class RobotContainer
   // Replace with CommandPS4Controller or CommandJoystick if needed
   final CommandXboxController driverXbox = new CommandXboxController(0);
   final CommandXboxController schmoXbox = new CommandXboxController(1);
+    final CommandXboxController helperXbox = new CommandXboxController(2);
+
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                                 "swerve/neo"));
@@ -245,6 +247,15 @@ public class RobotContainer
       schmoXbox.rightBumper().whileTrue(flywheel.runFlywheelCommandSD());
       schmoXbox.rightTrigger().whileTrue(spinUpAndFeedCommand());
       schmoXbox.start().onTrue(fullStopCommand());
+      helperXbox.leftTrigger().whileTrue(armFlywheel.runFlywheelCommandSD());
+      helperXbox.leftBumper().whileTrue(feeder.runFeederSD());
+      helperXbox.a().whileTrue(arm.runThrow());
+      helperXbox.y().whileTrue(arm.runLift());
+      helperXbox.b().whileTrue(armFlywheel.runFlywheelVoltage());
+      helperXbox.back().onTrue(launcherRotate.EncoderResetCommand());
+      helperXbox.rightBumper().whileTrue(flywheel.runFlywheelCommandSD());
+      helperXbox.rightTrigger().whileTrue(spinUpAndFeedCommand());
+      helperXbox.start().onTrue(fullStopCommand());
     }
   }
 
