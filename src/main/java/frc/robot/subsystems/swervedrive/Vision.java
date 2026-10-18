@@ -513,22 +513,21 @@ public class Vision
      */
     private void updateUnreadResults()
     {
-      double mostRecentTimestamp = resultsList.isEmpty() ? 0.0 : resultsList.get(0).getTimestampSeconds();
-      
-      for (PhotonPipelineResult result : resultsList)
-      {
-        mostRecentTimestamp = Math.max(mostRecentTimestamp, result.getTimestampSeconds());
-      }
-
         resultsList = Robot.isReal() ? camera.getAllUnreadResults() : cameraSim.getCamera().getAllUnreadResults();
-        resultsList.sort((PhotonPipelineResult a, PhotonPipelineResult b) -> {
-          return a.getTimestampSeconds() >= b.getTimestampSeconds() ? 1 : -1;
-        });
-        if (!resultsList.isEmpty())
+
+        if (resultsList.isEmpty())
         {
-          updateEstimatedGlobalPose();
+            // No new frame this loop. Clear the stored estimate so callers do not
+            // re-apply the same (stale) vision measurement to the pose estimator.
+            estimatedRobotPose = Optional.empty();
+            return;
         }
 
+        // Sort newest first (strict comparator: ties get 0).
+        resultsList.sort((PhotonPipelineResult a, PhotonPipelineResult b) -> {
+          return -Double.compare(a.getTimestampSeconds(), b.getTimestampSeconds());
+        });
+        updateEstimatedGlobalPose();
     }
 
     /**
@@ -543,15 +542,15 @@ public class Vision
      */
     private void updateEstimatedGlobalPose()
     {
-      Optional<EstimatedRobotPose> visionEst = Optional.empty();
-      for (var change : resultsList)
-      {
-        visionEst = poseEstimator.estimateCoprocMultiTagPose(change);
-        if (visionEst.isEmpty()) {
-            visionEst = poseEstimator.estimateLowestAmbiguityPose(change);
-        }
-        updateEstimationStdDevs(visionEst, change.getTargets());
+      // resultsList is sorted newest-first; estimate from the newest frame in
+      // the batch. Estimating from the last (oldest) element applied a stale
+      // frame's pose, which made odometry lag and judder behind the robot.
+      PhotonPipelineResult newest = resultsList.get(0);
+      Optional<EstimatedRobotPose> visionEst = poseEstimator.estimateCoprocMultiTagPose(newest);
+      if (visionEst.isEmpty()) {
+          visionEst = poseEstimator.estimateLowestAmbiguityPose(newest);
       }
+      updateEstimationStdDevs(visionEst, newest.getTargets());
       estimatedRobotPose = visionEst;
     }
 
