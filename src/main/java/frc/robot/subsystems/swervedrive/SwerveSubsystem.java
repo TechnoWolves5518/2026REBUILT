@@ -25,6 +25,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
@@ -77,6 +78,32 @@ public class SwerveSubsystem extends SubsystemBase
   private       Vision      vision;
 
   /**
+   * Human-readable module names in the order returned by {@link SwerveDrive#getModules()}.
+   */
+  private static final String[] MODULE_NAMES = {"front-left", "front-right", "back-left", "back-right"};
+
+  /**
+   * Desired module states captured by the most recent drive command, for jam detection.
+   */
+  private SwerveModuleState[] lastDesiredStates;
+
+  /**
+   * FPGA timestamp of the last desired-state capture.
+   */
+  private double lastDesiredStatesFPGATime;
+
+  // Per-module jam detector state (allocated in {@link #initJamDetection()}).
+  private int[]     jamDriveLoops;
+  private boolean[] jamDriveLatched;
+  private int[]     jamSteerLoops;
+  private boolean[] jamSteerLatched;
+  private int[]     steerFrozenLoops;
+  private double[]  steerPrevAngle;
+  private int[]     steerStallLoops;
+  private int[]     steerJamCooldown;
+  private int[]     steerJamEventCount;
+
+  /**
    * Initialize {@link SwerveDrive} with the directory provided.
    *
    * @param directory Directory of swerve drive config files.
@@ -101,6 +128,7 @@ public class SwerveSubsystem extends SubsystemBase
     {
       throw new RuntimeException(e);
     }
+    initJamDetection();
     swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via angle.
     swerveDrive.setCosineCompensator(false);//!SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for simulations since it causes discrepancies not seen in real life.
     swerveDrive.setAngularVelocityCompensation(true,
@@ -183,6 +211,7 @@ public class SwerveSubsystem extends SubsystemBase
                                   Constants.MAX_SPEED,
                                   new Pose2d(new Translation2d(Meter.of(2), Meter.of(0)),
                                              Rotation2d.fromDegrees(0)));
+    initJamDetection();
   }
 
   /**
@@ -205,6 +234,9 @@ public class SwerveSubsystem extends SubsystemBase
         vision.updatePoseEstimation(swerveDrive);
       }
     }
+
+    // Detect modules that are commanded but not reaching their state
+    checkSwerveJams();
   }
 
   @Override
@@ -234,6 +266,7 @@ public class SwerveSubsystem extends SubsystemBase
           this::getRobotVelocity,
           // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
           (speedsRobotRelative, moduleFeedForwards) -> {
+            recordDesiredStates(speedsRobotRelative);
             if (enableFeedforward)
             {
               swerveDrive.drive(
@@ -368,6 +401,7 @@ public class SwerveSubsystem extends SubsystemBase
                       swerveDrive.drive(newSetpoint.robotRelativeSpeeds(),
                                         newSetpoint.moduleStates(),
                                         newSetpoint.feedforwards().linearForces());
+                      recordDesiredStates(newSetpoint.moduleStates());
                       prevSetpoint.set(newSetpoint);
                       previousTime.set(newTime);
 
@@ -472,13 +506,17 @@ public class SwerveSubsystem extends SubsystemBase
   public Command driveCommand(DoubleSupplier translationX, DoubleSupplier translationY, DoubleSupplier angularRotationX)
   {
     return run(() -> {
+      Translation2d scaledTranslation = SwerveMath.scaleTranslation(new Translation2d(
+          translationX.getAsDouble() * swerveDrive.getMaximumChassisVelocity(),
+          translationY.getAsDouble() * swerveDrive.getMaximumChassisVelocity()), 0.8);
+      double rotationVelocity = Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumChassisAngularVelocity();
+
+      recordDesiredStates(ChassisSpeeds.fromFieldRelativeSpeeds(scaledTranslation.getX(),
+                                                                scaledTranslation.getY(),
+                                                                rotationVelocity,
+                                                                getHeading()));
       // Make the robot move
-      swerveDrive.drive(SwerveMath.scaleTranslation(new Translation2d(
-                            translationX.getAsDouble() * swerveDrive.getMaximumChassisVelocity(),
-                            translationY.getAsDouble() * swerveDrive.getMaximumChassisVelocity()), 0.8),
-                        Math.pow(angularRotationX.getAsDouble(), 3) * swerveDrive.getMaximumChassisAngularVelocity(),
-                        true,
-                        false);
+      swerveDrive.drive(scaledTranslation, rotationVelocity, true, false);
     });
   }
 
@@ -525,6 +563,12 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public void drive(Translation2d translation, double rotation, boolean fieldRelative)
   {
+    recordDesiredStates(fieldRelative
+                            ? ChassisSpeeds.fromFieldRelativeSpeeds(translation.getX(),
+                                                                    translation.getY(),
+                                                                    rotation,
+                                                                    getHeading())
+                            : new ChassisSpeeds(translation.getX(), translation.getY(), rotation));
     swerveDrive.drive(translation,
                       rotation,
                       fieldRelative,
@@ -538,6 +582,7 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public void driveFieldOriented(ChassisSpeeds velocity)
   {
+    recordDesiredStates(ChassisSpeeds.fromFieldRelativeSpeeds(velocity, getHeading()));
     swerveDrive.driveFieldOriented(velocity);
   }
 
@@ -549,7 +594,7 @@ public class SwerveSubsystem extends SubsystemBase
   public Command driveFieldOriented(Supplier<ChassisSpeeds> velocity)
   {
     return run(() -> {
-      swerveDrive.driveFieldOriented(velocity.get());
+      driveFieldOriented(velocity.get());
     });
   }
 
@@ -560,7 +605,169 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public void drive(ChassisSpeeds velocity)
   {
+    recordDesiredStates(velocity);
     swerveDrive.drive(velocity);
+  }
+
+  /**
+   * Allocate the per-module arrays used by the jam detector. Call from every constructor.
+   */
+  private void initJamDetection()
+  {
+    int moduleCount = swerveDrive.getModules().length;
+    jamDriveLoops = new int[moduleCount];
+    jamDriveLatched = new boolean[moduleCount];
+    jamSteerLoops = new int[moduleCount];
+    jamSteerLatched = new boolean[moduleCount];
+    steerFrozenLoops = new int[moduleCount];
+    steerPrevAngle = new double[moduleCount];
+    steerStallLoops = new int[moduleCount];
+    steerJamCooldown = new int[moduleCount];
+    steerJamEventCount = new int[moduleCount];
+    SwerveModuleState[] initialStates = swerveDrive.getStates();
+    for (int i = 0; i < moduleCount; i++)
+    {
+      steerPrevAngle[i] = initialStates[i].angle.getDegrees();
+    }
+  }
+
+  /**
+   * Record the desired module states issuing from the most recent drive command, for use by the
+   * jam detector.
+   *
+   * @param states Desired module states (robot-relative kinematics output).
+   */
+  private void recordDesiredStates(SwerveModuleState[] states)
+  {
+    lastDesiredStates = states.clone();
+    lastDesiredStatesFPGATime = Timer.getFPGATimestamp();
+  }
+
+  /**
+   * Record the desired module states implied by a robot-relative chassis speed, for use by the
+   * jam detector.
+   *
+   * @param robotRelativeSpeeds Robot-relative {@link ChassisSpeeds} of the most recent drive command.
+   */
+  private void recordDesiredStates(ChassisSpeeds robotRelativeSpeeds)
+  {
+    recordDesiredStates(swerveDrive.kinematics.toSwerveModuleStates(robotRelativeSpeeds));
+  }
+
+  /**
+   * Detects swerve modules that are being commanded to a state but are not achieving it. Reports
+   * errors to the DriverStation. Two tiers, both edge-triggered so a stuck module only prints once
+   * until it recovers:
+   * <ul>
+   *   <li>Sustained jam: large drive speed or steer angle error held for
+   *       {@link DrivebaseConstants.SwerveJamConstants#JAM_CONSECUTIVE_LOOPS} loops.</li>
+   *   <li>Brief steer jam: steer angle error on a module whose measured heading is frozen, which
+   *       catches short moments where steering physically cannot move (e.g. a slipped drive gear
+   *       interfering with the steer bearing). This works no matter what rotation is commanded at
+   *       any point of the match.</li>
+   * </ul>
+   * Checks only run while fresh desired states were recorded recently, so commands that bypass the
+   * drive wrappers (lock, centerModules, sysId) cannot trip false positives.
+   */
+  private void checkSwerveJams()
+  {
+    int moduleCount = swerveDrive.getModules().length;
+    if (lastDesiredStates == null ||
+        Timer.getFPGATimestamp() - lastDesiredStatesFPGATime >
+            DrivebaseConstants.SwerveJamConstants.STALE_DESIRED_STATE_TIME)
+    {
+      // No fresh command data: drop any half-collected evidence so stale commands cannot trip.
+      for (int i = 0; i < moduleCount; i++)
+      {
+        jamDriveLoops[i] = 0;
+        jamDriveLatched[i] = false;
+        jamSteerLoops[i] = 0;
+        jamSteerLatched[i] = false;
+        steerStallLoops[i] = 0;
+        steerJamCooldown[i] = 0;
+      }
+      return;
+    }
+
+    SwerveModuleState[] measuredStates = swerveDrive.getStates();
+    for (int i = 0; i < moduleCount && i < lastDesiredStates.length; i++)
+    {
+      SwerveModuleState measured = measuredStates[i];
+      // Normalize against the measured heading so the kinematics' 180deg flip is not misread as a jam.
+      SwerveModuleState desired = SwerveModuleState.optimize(lastDesiredStates[i], measured.angle);
+
+      double speedError = measured.speedMetersPerSecond - desired.speedMetersPerSecond;
+      double angleError = MathUtil.inputModulus(measured.angle.getDegrees() - desired.angle.getDegrees(),
+                                                -180, 180);
+
+      // Tier 1 - sustained drive jam
+      if (Math.abs(desired.speedMetersPerSecond) > DrivebaseConstants.SwerveJamConstants.JAM_MIN_COMMANDED_SPEED &&
+          Math.abs(speedError) > DrivebaseConstants.SwerveJamConstants.JAM_SPEED_TOLERANCE)
+      {
+        jamDriveLoops[i]++;
+        if (jamDriveLoops[i] >= DrivebaseConstants.SwerveJamConstants.JAM_CONSECUTIVE_LOOPS && !jamDriveLatched[i])
+        {
+          jamDriveLatched[i] = true;
+          DriverStation.reportError("Swerve Jam Error: " + MODULE_NAMES[i] +
+                                        " drive is not keeping up with its commanded speed",
+                                    false);
+        }
+      } else
+      {
+        jamDriveLoops[i] = 0;
+        jamDriveLatched[i] = false;
+      }
+
+      // Tier 1 - sustained steer jam / drift
+      if (Math.abs(angleError) > DrivebaseConstants.SwerveJamConstants.JAM_ANGLE_TOLERANCE)
+      {
+        jamSteerLoops[i]++;
+        if (jamSteerLoops[i] >= DrivebaseConstants.SwerveJamConstants.JAM_CONSECUTIVE_LOOPS && !jamSteerLatched[i])
+        {
+          jamSteerLatched[i] = true;
+          DriverStation.reportError("Swerve Jam Error: " + MODULE_NAMES[i] +
+                                        " steer is not tracking its commanded angle",
+                                    false);
+        }
+      } else
+      {
+        jamSteerLoops[i] = 0;
+        jamSteerLatched[i] = false;
+      }
+
+      // Tier 2 - brief steer jam: error present while the module is frozen in place
+      double measuredAngle = measured.angle.getDegrees();
+      double moved = Math.abs(MathUtil.inputModulus(measuredAngle - steerPrevAngle[i], -180, 180));
+      steerPrevAngle[i] = measuredAngle;
+      if (moved < DrivebaseConstants.SwerveJamConstants.STEER_STALL_MOVE_PER_LOOP)
+      {
+        steerFrozenLoops[i]++;
+      } else
+      {
+        steerFrozenLoops[i] = 0;
+      }
+      if (Math.abs(angleError) > DrivebaseConstants.SwerveJamConstants.STEER_STALL_ERROR &&
+          steerFrozenLoops[i] >= DrivebaseConstants.SwerveJamConstants.STEER_STALL_FROZEN_LOOPS)
+      {
+        steerStallLoops[i]++;
+      } else
+      {
+        steerStallLoops[i] = 0;
+      }
+      if (steerJamCooldown[i] > 0)
+      {
+        steerJamCooldown[i]--;
+      }
+      if (steerStallLoops[i] >= DrivebaseConstants.SwerveJamConstants.STEER_STALL_REPORT_LOOPS &&
+          steerJamCooldown[i] <= 0)
+      {
+        steerJamCooldown[i] = DrivebaseConstants.SwerveJamConstants.STEER_JAM_REPORT_COOLDOWN;
+        steerJamEventCount[i]++;
+        DriverStation.reportError("Swerve Steer Jam: " + MODULE_NAMES[i] +
+                                      " steer jam event " + steerJamEventCount[i],
+                                  false);
+      }
+    }
   }
 
   /**
@@ -602,6 +809,7 @@ public class SwerveSubsystem extends SubsystemBase
    */
   public void setChassisSpeeds(ChassisSpeeds chassisSpeeds)
   {
+    recordDesiredStates(chassisSpeeds);
     swerveDrive.setChassisSpeeds(chassisSpeeds);
   }
 

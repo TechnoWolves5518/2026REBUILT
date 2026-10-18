@@ -59,6 +59,37 @@ public final class Constants
       private static final double BlueHubPoseY = Units.inchesToMeters(158.32);
       public static final Pose2d BlueHubPose = new Pose2d(BlueHubPoseX, BlueHubPoseY, new Rotation2d());
     }
+
+    /**
+     * Thresholds for detecting swerve modules that are commanded to a state but do not reach it
+     * (jams, gear slip, module drift). All checks work no matter what rotation is commanded.
+     */
+    public static final class SwerveJamConstants {
+      /** Age beyond which a recorded desired state is too stale to run jam checks against. */
+      public static final double STALE_DESIRED_STATE_TIME = 0.1; // seconds
+
+      // Tier 1 - sustained jam detection
+      /** Commanded drive speed below which drive jam checks are skipped (avoids standstill false trips). */
+      public static final double JAM_MIN_COMMANDED_SPEED = 1.0; // m/s
+      /** Drive speed error above which a module is considered jammed. */
+      public static final double JAM_SPEED_TOLERANCE = 1.5; // m/s
+      /** Steer angle error above which a module is considered jammed/drifted. */
+      public static final double JAM_ANGLE_TOLERANCE = 30; // degrees
+      /** Consecutive loops a condition must hold before a sustained jam is reported (15 @ 20ms = 300ms). */
+      public static final int JAM_CONSECUTIVE_LOOPS = 15;
+
+      // Tier 2 - brief steer jam detection (e.g. a slipping drive gear locking the steer bearing)
+      /** Steer angle error above which a frozen module is considered briefly jammed. */
+      public static final double STEER_STALL_ERROR = 15; // degrees
+      /** Per-loop measured steer movement below which the module is considered frozen. */
+      public static final double STEER_STALL_MOVE_PER_LOOP = 0.4; // degrees
+      /** Consecutive frozen loops required to consider the module stalled. */
+      public static final int STEER_STALL_FROZEN_LOOPS = 3;
+      /** Consecutive loops the stall+error condition must hold before reporting (4 @ 20ms = 80ms). */
+      public static final int STEER_STALL_REPORT_LOOPS = 4;
+      /** Loops to wait before the next steer jam report for the same module (50 @ 20ms = 1s). */
+      public static final int STEER_JAM_REPORT_COOLDOWN = 50;
+    }
   }
 
   public static class VisionSystem {
